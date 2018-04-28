@@ -723,7 +723,7 @@ void SCR_ScreenShot_f (void)
 	buffer[15] = glheight>>8;
 	buffer[16] = 24;	// pixel size
 
-	glReadPixels_fp (glx, gly, glwidth, glheight, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
+	qglReadPixels (glx, gly, glwidth, glheight, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
 
 	// swap rgb to bgr
 	c = 18+glwidth*glheight*3;
@@ -943,7 +943,7 @@ void SCR_UpdateScreen (void)
 
 
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
-	
+
 	//
 	// determine size of refresh window
 	//
@@ -1022,4 +1022,3 @@ void SCR_UpdateScreen (void)
 
 	GL_EndRendering ();
 }
-

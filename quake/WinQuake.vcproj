@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\common\win32\dxsdk\sdk\lib\dxguid.lib comctl32.lib winmm.lib ws2_32.lib opengl32.lib glu32.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib"
 				OutputFile="$(OutDir)\glquake2.exe"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -3330,6 +3330,14 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\common\qgl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\common\win32\qgl_win.c"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Software"
@@ -5152,10 +5160,6 @@
 			</File>
 			<File
 				RelativePath="..\common\dstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\common\gl_func.h"
 				>
 			</File>
 			<File

@@ -91,21 +91,21 @@ void R_RenderDlight (dlight_t *light)
 		return;
 	}
 
-	glBegin_fp (GL_TRIANGLE_FAN);
-	glColor3f_fp (0.2,0.1,0.0);
+	qglBegin (GL_TRIANGLE_FAN);
+	qglColor3f (0.2,0.1,0.0);
 	for (i=0 ; i<3 ; i++)
 		v[i] = light->origin[i] - vpn[i]*rad;
-	glVertex3fv_fp (v);
-	glColor3f_fp (0,0,0);
+	qglVertex3fv (v);
+	qglColor3f (0,0,0);
 	for (i=16 ; i>=0 ; i--)
 	{
 		a = i/16.0 * M_PI*2;
 		for (j=0 ; j<3 ; j++)
 			v[j] = light->origin[j] + vright[j]*cos(a)*rad
 				+ vup[j]*sin(a)*rad;
-		glVertex3fv_fp (v);
+		qglVertex3fv (v);
 	}
-	glEnd_fp ();
+	qglEnd ();
 }
 #else
 float bubble_sintable[17], bubble_costable[17];
@@ -146,12 +146,12 @@ void R_RenderDlight (dlight_t *light)
 		return;
 	}
 
-	glBegin_fp (GL_TRIANGLE_FAN);
-	glColor4f_fp (light->color[0], light->color[1], light->color[2], light->color[3]); // changed dimlight effect
+	qglBegin (GL_TRIANGLE_FAN);
+	qglColor4f (light->color[0], light->color[1], light->color[2], light->color[3]); // changed dimlight effect
 	for (i=0 ; i<3 ; i++)
 		v[i] = light->origin[i] - vpn[i]*rad;
-	glVertex3fv_fp (v);
-	glColor3f_fp (0,0,0);
+	qglVertex3fv (v);
+	qglColor3f (0,0,0);
 	for (i=16 ; i>=0 ; i--)
 	{
 //		a = i/16.0 * M_PI*2;
@@ -160,9 +160,9 @@ void R_RenderDlight (dlight_t *light)
 				+ vup[j]*(*bub_sin)) * rad;
 		bub_sin++; 
 		bub_cos++;
-		glVertex3fv_fp (v);
+		qglVertex3fv (v);
 	}
-	glEnd_fp ();
+	qglEnd ();
 }
 #endif // QUAKE1
 
@@ -181,11 +181,11 @@ void R_RenderDlights (void)
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
-	glDepthMask_fp (0);
-	glDisable_fp (GL_TEXTURE_2D);
-	glShadeModel_fp (GL_SMOOTH);
-	glEnable_fp (GL_BLEND);
-	glBlendFunc_fp (GL_ONE, GL_ONE);
+	qglDepthMask (0);
+	qglDisable (GL_TEXTURE_2D);
+	qglShadeModel (GL_SMOOTH);
+	qglEnable (GL_BLEND);
+	qglBlendFunc (GL_ONE, GL_ONE);
 
 	l = cl_dlights;
 	for (i=0 ; i<MAX_DLIGHTS ; i++, l++)
@@ -195,11 +195,11 @@ void R_RenderDlights (void)
 		R_RenderDlight (l);
 	}
 
-	glColor3f_fp (1,1,1);
-	glDisable_fp (GL_BLEND);
-	glEnable_fp (GL_TEXTURE_2D);
-	glBlendFunc_fp (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask_fp (1);
+	qglColor3f (1,1,1);
+	qglDisable (GL_BLEND);
+	qglEnable (GL_TEXTURE_2D);
+	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	qglDepthMask (1);
 }
 
 

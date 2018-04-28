@@ -125,43 +125,43 @@ void DrawPuff (puff_t *p)
 		}
 	}
 
-	glColor3f_fp (1, 0, 0);
+	qglColor3f (1, 0, 0);
 
 #if 0
-	glBegin_fp (GL_LINES);
-	glVertex3fv_fp (p->origin);
-	glVertex3f_fp (p->origin[0] + p->length*p->reflect[0],
+	qglBegin (GL_LINES);
+	qglVertex3fv (p->origin);
+	qglVertex3f (p->origin[0] + p->length*p->reflect[0],
 		p->origin[1] + p->length*p->reflect[1],
 		p->origin[2] + p->length*p->reflect[2]);
 
-	glVertex3fv_fp (pts[0][0]);
-	glVertex3fv_fp (pts[1][0]);
+	qglVertex3fv (pts[0][0]);
+	qglVertex3fv (pts[1][0]);
 
-	glVertex3fv_fp (pts[0][1]);
-	glVertex3fv_fp (pts[1][1]);
+	qglVertex3fv (pts[0][1]);
+	qglVertex3fv (pts[1][1]);
 
-	glVertex3fv_fp (pts[0][2]);
-	glVertex3fv_fp (pts[1][2]);
+	qglVertex3fv (pts[0][2]);
+	qglVertex3fv (pts[1][2]);
 
-	glEnd_fp ();
+	qglEnd ();
 #endif
 
-	glBegin_fp (GL_QUADS);
+	qglBegin (GL_QUADS);
 	for (i=0 ; i<3 ; i++)
 	{
 		j = (i+1)%3;
-		glVertex3fv_fp (pts[0][j]);
-		glVertex3fv_fp (pts[1][j]);
-		glVertex3fv_fp (pts[1][i]);
-		glVertex3fv_fp (pts[0][i]);
+		qglVertex3fv (pts[0][j]);
+		qglVertex3fv (pts[1][j]);
+		qglVertex3fv (pts[1][i]);
+		qglVertex3fv (pts[0][i]);
 	}
-	glEnd_fp ();
+	qglEnd ();
 
-	glBegin_fp (GL_TRIANGLES);
-	glVertex3fv_fp (pts[1][0]);
-	glVertex3fv_fp (pts[1][1]);
-	glVertex3fv_fp (pts[1][2]);
-	glEnd_fp ();
+	qglBegin (GL_TRIANGLES);
+	qglVertex3fv (pts[1][0]);
+	qglVertex3fv (pts[1][1]);
+	qglVertex3fv (pts[1][2]);
+	qglEnd ();
 
 	p->length -= host_frametime*2;
 }

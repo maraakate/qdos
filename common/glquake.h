@@ -26,25 +26,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma warning(disable : 4244)     // MIPS
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA
-
 #include <windows.h>
 #endif
 
 #include <GL/gl.h>
+#include <GL/glext.h>
+#include <math.h>
+
+#include "qgl.h"
 
 /* include our function pointers */
-#include "gl_func.h"
+//#include "gl_func.h"
 
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
-
-
-#ifdef _WIN32
-// Function prototypes for the Texture Object Extension routines
-typedef void (APIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
-
-extern	BINDTEXFUNCPTR bindTexFunc;
-#endif
 
 extern	int texture_extension_number;
 
@@ -55,15 +50,6 @@ void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean a
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha);
 int GL_FindTexture (char *identifier);
-
-typedef struct
-{
-	float	x, y, z;
-	float	s, t;
-	float	r, g, b;
-} glvert_t;
-
-extern glvert_t glv;
 
 extern	int glx, gly, glwidth, glheight;
 
@@ -310,5 +296,7 @@ void R_RenderBrushPoly (msurface_t *fa);
 #ifdef QUAKEWORLD
 void R_NetGraph (void);
 #endif
+
+qboolean VID_Is8bit (void);
 
 #endif // __GLQUAKE_H
