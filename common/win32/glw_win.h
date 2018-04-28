@@ -34,8 +34,8 @@ typedef struct
 	HGLRC   hGLRC;			// handle to GL rendering context
 
 	HINSTANCE hinstOpenGL;	// HINSTANCE for the OpenGL library
+	PIXELFORMATDESCRIPTOR pfd;
 
-	qboolean minidriver;
 	qboolean allowdisplaydepthchange;
 	qboolean mcd_accelerated;
 
