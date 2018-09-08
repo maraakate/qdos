@@ -1703,4 +1703,3 @@ void GL_BuildLightmaps (void)
 		GL_SelectTexture(TEXTURE0);
 
 }
-

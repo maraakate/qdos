@@ -1226,3 +1226,26 @@ void R_RenderView (void)
 void R_ClearDynamic (void) {}
 
 void R_Restart_f (void) {}
+
+void R_Shutdown (void)
+{
+	D_FlushCaches();
+	GL_ClearTextureCache();
+	texture_extension_number = 0;
+
+	Cmd_RemoveCommand ("timerefresh");
+	Cmd_RemoveCommand ("envmap");
+	Cmd_RemoveCommand ("pointfile");
+	Cmd_RemoveCommand ("+showscores");
+	Cmd_RemoveCommand ("-showscores");
+}
+
+void R_Restart (void)
+{
+	GL_Init();
+	Draw_Init();
+	R_Init();
+	Sbar_Init ();
+	R_InitParticleTexture();
+	GL_BuildLightmaps();
+}

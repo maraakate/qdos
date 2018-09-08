@@ -376,6 +376,7 @@ void Sys_Error (const char *error, ...)
 		DeinitConProc ();
 	}
 
+	printf(errtext1->str);
 	exit (1);
 }
 #else

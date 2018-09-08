@@ -167,10 +167,10 @@ R_Init
 ===============
 */
 void R_Init (void)
-{	
-	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
-	Cmd_AddCommand ("envmap", R_Envmap_f);	
-	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);	
+{
+	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);
+	Cmd_AddCommand ("envmap", R_Envmap_f);
+	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 
 	r_norefresh = Cvar_Get("r_norefresh", "0", 0);
 	r_lightmap = Cvar_Get("r_lightmap", "0", 0);
@@ -609,8 +609,4 @@ void R_TimeRefresh_f (void)
 	GL_EndRendering ();
 }
 
-void D_FlushCaches (void)
-{
-}
-
-
+void D_FlushCaches (void) {}

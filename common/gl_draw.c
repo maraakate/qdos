@@ -1329,6 +1329,8 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 	extern	qboolean isDedicated;
 #endif
 
+	Con_Printf("Load: %s\n", identifier);
+
 	// LordHavoc: do a checksum to confirm the data really is the same as previous
 	// occurances. well this isn't exactly a checksum, it's better than that but
 	// not following any standards.
@@ -1455,4 +1457,16 @@ void GL_SelectTexture (GLenum target)
 	}
 
 	currenttarget = target;
+}
+
+void GL_ClearTextureCache (void)
+{
+	gltexture_t	*glt;
+	int i;
+
+	for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
+	{
+		memset(glt, 0, sizeof(gltexture_t));
+	}
+	numgltextures = 0;
 }

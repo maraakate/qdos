@@ -294,7 +294,7 @@ Con_Init
 */
 void Con_Init (void)
 {
-	con_debuglog = COM_CheckParm("-condebug");
+	con_debuglog = true;//COM_CheckParm("-condebug");
 
 	con = &con_main;
 	con_linewidth = -1;

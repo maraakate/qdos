@@ -64,6 +64,7 @@ void R_InitParticles (void)
 			Hunk_AllocName (r_numparticles * sizeof(particle_t), "particles");
 }
 
+
 /*
 ===============
 R_EntityParticles

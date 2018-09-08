@@ -48,7 +48,6 @@ qboolean DDActive;
 qboolean scr_skipupdate;
 
 static DEVMODE gdevmode;
-static qboolean vid_initialized = false;
 static qboolean windowed, leavecurrentmode;
 static qboolean vid_canalttab = false;
 static qboolean vid_wassuspended = false;
@@ -76,6 +75,8 @@ static float vid_gamma = 1.0;
 cvar_t *gl_ztrick;
 cvar_t *gl_conscale; /* FS */
 cvar_t *vid_fullscreen;
+cvar_t *vid_xpos;
+cvar_t *vid_ypos;
 
 LONG CDAudio_MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -97,6 +98,7 @@ void AppActivate(BOOL fActive, BOOL minimize);
 void ClearAllStates(void);
 void VID_UpdateWindowStatus(void);
 void GL_Init(void);
+static void Check_Gamma(unsigned char *pal);
 
 qboolean is8bit = false;
 qboolean gl_mtexable = false;
@@ -426,8 +428,30 @@ void GL_Init(void)
 GL_BeginRendering -- sets values of glx, gly, glwidth, glheight
 =================
 */
+extern void GL_ClearTextureCache (void);
 void GL_BeginRendering(int *x, int *y, int *width, int *height)
 {
+	if (vid_fullscreen->modified)
+	{
+		vid_fullscreen->modified = false;
+
+		VID_Shutdown();
+		R_Shutdown();
+
+		VID_SetMode (vid_default, host_basepal);
+
+		glw_state.hDC = GetDC(glw_state.hWnd);
+		bSetupPixelFormat(glw_state.hDC);
+
+		glw_state.hGLRC = qwglCreateContext(glw_state.hDC);
+		if (!glw_state.hGLRC)
+			Sys_Error ("Could not initialize GL (wglCreateContext failed).");
+		if (!qwglMakeCurrent(glw_state.hDC, glw_state.hGLRC))
+			Sys_Error ("qwglMakeCurrent failed");
+
+		R_Restart();
+	}
+
 	*x = *y = 0;
 	*width = WindowRect.right - WindowRect.left;
 	*height = WindowRect.bottom - WindowRect.top;
@@ -534,30 +558,41 @@ void VID_SetDefaultMode(void)
 
 void VID_Shutdown(void)
 {
-	if (vid_initialized)
+	if ( qwglMakeCurrent && !qwglMakeCurrent( NULL, NULL ) )
 	{
-		qwglMakeCurrent(NULL, NULL);
-
-		if (glw_state.hGLRC)
-		{
-			qwglDeleteContext(glw_state.hGLRC);
-			glw_state.hGLRC = NULL;
-		}
-
-		if (glw_state.hDC && glw_state.hWnd)
-		{
-			ReleaseDC(glw_state.hWnd, glw_state.hDC);
-			glw_state.hDC = NULL;
-		}
-
-		if (glw_state.hWnd)
-		{
-			DestroyWindow(glw_state.hWnd);
-			glw_state.hWnd = NULL;
-		}
-
-		AppActivate(false, false);
+		Con_Printf("VID_Shutdown - wglMakeCurrent failed\n");
 	}
+
+	if ( glw_state.hGLRC )
+	{
+		if (  qwglDeleteContext && !qwglDeleteContext( glw_state.hGLRC ) )
+		{
+			Con_Printf("VID_Shutdown - wglDeleteContext failed\n");
+		}
+		glw_state.hGLRC = NULL;
+	}
+	if (glw_state.hDC)
+	{
+		if ( !ReleaseDC( glw_state.hWnd, glw_state.hDC ) )
+			Con_Printf("VID_Shutdown - ReleaseDC failed\n" );
+		glw_state.hDC   = NULL;
+	}
+	if (glw_state.hWnd)
+	{
+		ShowWindow( glw_state.hWnd, SW_HIDE );
+		DestroyWindow (	glw_state.hWnd );
+		glw_state.hWnd = NULL;
+	}
+
+	if ( glw_state.log_fp )
+	{
+		fclose( glw_state.log_fp );
+		glw_state.log_fp = 0;
+	}
+
+	UnregisterClass (WINDOW_CLASS_NAME, glw_state.hInstance);
+
+	AppActivate(false, false);
 }
 
 //==========================================================================
@@ -666,7 +701,6 @@ void AppActivate(BOOL fActive, BOOL minimize)
 /* main window procedure */
 LONG WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	LONG lRet = 1;
 	int fActive, fMinimized, temp;
 //	extern unsigned int uiWheelMessage;
 
@@ -675,20 +709,40 @@ LONG WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg)
 	{
-	case WM_KILLFOCUS:
-		if (modestate == MS_FULLDIB)
-			ShowWindow(mainwindow, SW_SHOWMINNOACTIVE);
-		break;
-
 	case WM_CREATE:
 		mainwindow = hWnd;
-		break;
+
+//		MSH_MOUSEWHEEL = RegisterWindowMessage("MSWHEEL_ROLLMSG"); 
+        return DefWindowProc (hWnd, uMsg, wParam, lParam);
 
 	case WM_MOVE:
-		window_x = (int) LOWORD(lParam);
-		window_y = (int) HIWORD(lParam);
-		VID_UpdateWindowStatus ();
-		break;
+		{
+			int		xPos, yPos;
+			RECT r;
+			int		style;
+
+			if (!vid_fullscreen->value)
+			{
+				xPos = (short) LOWORD(lParam);    // horizontal position 
+				yPos = (short) HIWORD(lParam);    // vertical position 
+
+				r.left   = 0;
+				r.top    = 0;
+				r.right  = 1;
+				r.bottom = 1;
+
+				style = GetWindowLong( hWnd, GWL_STYLE );
+				AdjustWindowRect( &r, style, FALSE );
+
+				Cvar_SetValue( "vid_xpos", xPos + r.left);
+				Cvar_SetValue( "vid_ypos", yPos + r.top);
+				vid_xpos->modified = false;
+				vid_ypos->modified = false;
+				if (ActiveApp)
+					IN_ActivateMouse ();
+			}
+		}
+        return DefWindowProc (hWnd, uMsg, wParam, lParam);
 
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
@@ -764,26 +818,20 @@ LONG WINAPI MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
-	{
-		if (glw_state.hWnd)
-			DestroyWindow (glw_state.hWnd);
-
-		PostQuitMessage (0);
-	}
-	break;
+		// let sound and input know about this?
+		mainwindow = NULL;
+        return DefWindowProc (hWnd, uMsg, wParam, lParam);
 
 	case MM_MCINOTIFY:
-		lRet = CDAudio_MessageHandler (hWnd, uMsg, wParam, lParam);
-		break;
+		return CDAudio_MessageHandler (hWnd, uMsg, wParam, lParam);
 
 	default:
 		/* pass all unhandled messages to DefWindowProc */
-		lRet = DefWindowProc (hWnd, uMsg, wParam, lParam);
-		break;
+		return DefWindowProc (hWnd, uMsg, wParam, lParam);
 	}
 
-	/* return 1 if handled message, 0 if not */
-	return lRet;
+    /* return 0 if handled message, 1 if not */
+    return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }
 
 static void Check_Gamma(unsigned char *pal)
@@ -845,13 +893,14 @@ void VID_Init(unsigned char *palette)
 	gl_conscale = Cvar_Get("gl_conscale", "1", CVAR_ARCHIVE);
 	gl_conscale->description = "Set to 0 to make the console width and height equal to the current resolution.  Set to 1 to control it with conwidth and conheight cmdline.  Requires game restart.";
 	vid_fullscreen = Cvar_Get("vid_fullscreen", "2", CVAR_ARCHIVE);
+	vid_fullscreen->modified = false;
+	vid_xpos = Cvar_Get("vid_xpos", "0", CVAR_ARCHIVE);
+	vid_ypos = Cvar_Get("vid_ypos", "0", CVAR_ARCHIVE);
 
 	hIcon = LoadIcon (global_hInstance, MAKEINTRESOURCE (IDI_ICON2));
 
 	if (!QGL_Init("opengl32"))
 		Sys_Error("Opengl32 init failed!");
-
-	vid_initialized = true;
 
 	if (!gl_conscale->intValue) /* FS */
 	{
@@ -900,6 +949,10 @@ void VID_Init(unsigned char *palette)
 	glw_state.hGLRC = qwglCreateContext(glw_state.hDC);
 	if (!glw_state.hGLRC)
 		Sys_Error ("Could not initialize GL (wglCreateContext failed).");
+
+	if (!qwglMakeCurrent)
+		Sys_Error("Init wrong dumbass");
+
 	if (!qwglMakeCurrent(glw_state.hDC, glw_state.hGLRC))
 		Sys_Error ("qwglMakeCurrent failed");
 
@@ -914,6 +967,7 @@ void VID_Init(unsigned char *palette)
 	vid_menukeyfn = VID_MenuKey;
 
 	vid_canalttab = true;
+	vid_fullscreen->modified = false;
 }
 
 
