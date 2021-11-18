@@ -78,7 +78,6 @@ ifeq ($(FX),1)
 CFLAGS += -D__DOS__ -DH3
 CFLAGS += -I$(GLIDE)/include -DFX
 DXE_DEPS= -P glide3x.dxe
-#DXE_EXPORTS+= -E _fxMesa -E _fxQueryHardware -E _fxCloseHardware -E _fxGetScreenGeometry
 LIBNAME = "Mesa/FX DJGPP"
 else
 DXE_DEPS=

@@ -89,11 +89,6 @@ GLAPI void GLAPIENTRY fxCloseHardware(void);
 
 GLAPI void GLAPIENTRY fxGetScreenGeometry (GLint *w, GLint *h);
 
-#ifdef __MSDOS__ /* O.S. - added for DXE3 (DJGPP 2.04+) builds */
-typedef void (*fxMesaProc) ();
-fxMesaProc fxMesaGetProcAddress (const char * sym);
-#endif
-
 
 #if defined (__BEOS__)
 #pragma export off

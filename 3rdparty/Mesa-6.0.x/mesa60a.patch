@@ -1,41 +1,7 @@
-diff -urNp Mesa-6.0.1/include/GL/fxmesa.h Mesa-6.0.x/include/GL/fxmesa.h
---- Mesa-6.0.1/include/GL/fxmesa.h	2003-12-19 13:26:46.000000000 +0200
-+++ Mesa-6.0.x/include/GL/fxmesa.h	2016-03-21 22:41:50.000000000 +0200
-@@ -89,6 +89,11 @@ GLAPI void GLAPIENTRY fxCloseHardware(vo
- 
- GLAPI void GLAPIENTRY fxGetScreenGeometry (GLint *w, GLint *h);
- 
-+#ifdef __MSDOS__ /* O.S. - added for DXE3 (DJGPP 2.04+) builds */
-+typedef void (*fxMesaProc) ();
-+fxMesaProc fxMesaGetProcAddress (const char * sym);
-+#endif
-+
- 
- #if defined (__BEOS__)
- #pragma export off
-diff -urNp Mesa-6.0.1/src/mesa/drivers/glide/fxapi.c Mesa-6.0.x/src/mesa/drivers/glide/fxapi.c
---- Mesa-6.0.1/src/mesa/drivers/glide/fxapi.c	2004-01-15 18:02:28.000000000 +0200
-+++ Mesa-6.0.x/src/mesa/drivers/glide/fxapi.c	2016-03-21 22:41:50.000000000 +0200
-@@ -916,6 +916,15 @@ fxCloseHardware(void)
- }
- 
- 
-+#ifdef __MSDOS__
-+fxMesaProc
-+fxMesaGetProcAddress (const char *sym)
-+{
-+   fxMesaProc p = (fxMesaProc)_glapi_get_proc_address(sym);
-+   return p;
-+}
-+#endif
-+
- #else
- 
- 
 diff -urNp Mesa-6.0.1/src/mesa/Makefile.DJ Mesa-6.0.x/src/mesa/Makefile.DJ
 --- Mesa-6.0.1/src/mesa/Makefile.DJ	2016-02-25 07:55:00.000000000 +0200
 +++ Mesa-6.0.x/src/mesa/Makefile.DJ	2016-03-21 22:41:50.000000000 +0200
-@@ -71,11 +71,16 @@ GL_IMP = libigl.a
+@@ -71,11 +71,15 @@ GL_IMP = libigl.a
  HOST_CC = gcc
  CC = gcc
  CFLAGS += -I$(TOP)/include -I. -Imain -Iglapi
@@ -45,14 +11,13 @@ diff -urNp Mesa-6.0.1/src/mesa/Makefile.DJ Mesa-6.0.x/src/mesa/Makefile.DJ
  CFLAGS += -D__DOS__ -DH3
  CFLAGS += -I$(GLIDE)/include -DFX
 +DXE_DEPS= -P glide3x.dxe
-+#DXE_EXPORTS+= -E _fxMesa -E _fxQueryHardware -E _fxCloseHardware -E _fxGetScreenGeometry
  LIBNAME = "Mesa/FX DJGPP"
  else
 +DXE_DEPS=
  LIBNAME = "Mesa DJGPP"
  endif
  
-@@ -185,13 +190,11 @@ all: $(LIBDIR)/$(GL_LIB) $(LIBDIR)/$(GL_
+@@ -185,13 +189,11 @@ all: $(LIBDIR)/$(GL_LIB) $(LIBDIR)/$(GL_
  $(LIBDIR)/$(GL_LIB): $(OBJECTS)
  	$(AR) $(ARFLAGS) $@ $^
  

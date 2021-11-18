@@ -916,15 +916,6 @@ fxCloseHardware(void)
 }
 
 
-#ifdef __MSDOS__
-fxMesaProc
-fxMesaGetProcAddress (const char *sym)
-{
-   fxMesaProc p = (fxMesaProc)_glapi_get_proc_address(sym);
-   return p;
-}
-#endif
-
 #else
 
 
