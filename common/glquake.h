@@ -222,6 +222,7 @@ extern	cvar_t	*gl_playermip;
 
 extern	cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemode blah blah at cmdline or autoexec.cfg */
 
+extern	cvar_t	*gl_zfar_dist; /* FS */
 extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
 extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;

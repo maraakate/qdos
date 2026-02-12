@@ -112,6 +112,8 @@ cvar_t	*r_waterwarp; /* FS: TODO FIXME dummy */
 
 cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemode blah blah at cmdline or autoexec.cfg */
 
+cvar_t	*gl_zfar_dist; /* FS */
+
 void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
 /*
@@ -759,7 +761,7 @@ void R_DrawViewModel (void)
 		glMatrixMode_fp(GL_PROJECTION);
 		glPushMatrix_fp();
 		glLoadIdentity_fp();
-		MYgluPerspective(r_gunfov->value, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
+		MYgluPerspective(r_gunfov->value, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, gl_zfar_dist->value);
 		glMatrixMode_fp(GL_MODELVIEW);
 	}
 
@@ -937,6 +939,15 @@ void R_SetupGL (void)
 	extern	int glwidth, glheight;
 	int		x, x2, y2, y, w, h;
 
+	if (gl_zfar_dist->modified)
+	{
+		/* FS: Don't allow a stupid value. */
+		if (gl_zfar_dist->value < 1024.0f)
+			Cvar_Set("gl_zfar_dist", "1024");
+
+		gl_zfar_dist->modified = false;
+	}
+
 	//
 	// set up viewpoint
 	//
@@ -969,7 +980,7 @@ void R_SetupGL (void)
 	glViewport_fp (glx + x, gly + y2, w, h);
     screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-    MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
+    MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  gl_zfar_dist->value);
 
 	if (mirror)
 	{

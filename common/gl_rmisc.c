@@ -229,6 +229,10 @@ void R_Init (void)
 
 	gl_texturemode = Cvar_Get("gl_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE); /* FS: Now a CVAR so we can do +set gl_texturemode blah blah at cmdline or autoexec.cfg */
 
+	/* FS */
+	gl_zfar_dist = Cvar_Get("gl_zfar_dist", "8192", CVAR_ARCHIVE);
+	gl_zfar_dist->description = "Adjusts the zFar distance.  May need to be inreased for larger maps.";
+
 	R_InitBubble();
 
 	R_InitParticles ();
