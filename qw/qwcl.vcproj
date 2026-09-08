@@ -49,6 +49,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\common\win32,..\common\win32\dxsdk\sdk\inc,..\common\win32\scitech\include,winquake,..\common,.\"
 				PreprocessorDefinitions="QUAKEWORLD;WIN32;_DEBUG;_WINDOWS;OGG_SUPPORT;GAMESPY;USE_CURL"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				FloatingPointModel="2"
 				WarningLevel="3"
@@ -160,9 +161,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\common\win32\scitech\lib\win32\vc\mgllt.lib ..\common\win32\dxsdk\sdk\lib\dxguid.lib opengl32.lib ws2_32.lib odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="..\common\win32\scitech\lib\win32\vc\mgllt.lib ..\common\win32\dxsdk\sdk\lib\dxguid.lib ws2_32.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile=".\Release/WQWDOS.EXE"
 				IgnoreDefaultLibraryNames="libc.lib;libcmtd.lib"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -228,11 +230,12 @@
 				AdditionalOptions="/MP"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="..\common\win32,..\common\win32\dxsdk\sdk\inc,..\common\win32\scitech\include,winquake,..\common,.\"
 				PreprocessorDefinitions="QUAKEWORLD;WIN32;NDEBUG;_WINDOWS;OGG_SUPPORT;GAMESPY;USE_CURL;GLQUAKE"
 				StringPooling="true"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
+				FloatingPointModel="2"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -317,6 +320,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\common\win32,..\common\win32\dxsdk\sdk\inc,..\common\win32\scitech\include,winquake,..\common,.\"
 				PreprocessorDefinitions="QUAKEWORLD;WIN32;_DEBUG;_WINDOWS;OGG_SUPPORT;GAMESPY;USE_CURL;GLQUAKE"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				FloatingPointModel="2"
 				WarningLevel="3"
