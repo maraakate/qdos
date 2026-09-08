@@ -100,6 +100,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	int		len;
 	float	stepscale;
 	sfxcache_t	*sc;
+	byte	stackbuf[1*1024];		// avoid dirtying the cache heap
 
 // see if still in memory
 	sc = (sfxcache_t *) s->cache;
@@ -113,7 +114,8 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 
 //	Com_Printf ("loading %s\n",namebuffer);
 	
-	data = COM_LoadFile(namebuffer, 0);
+	data = COM_LoadStackFile(namebuffer, stackbuf, sizeof(stackbuf));
+
 	if (!data)
 	{
 		Com_Printf ("Couldn't load %s\n", namebuffer);
@@ -150,8 +152,6 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	// end Knightmare
 
 	ResampleSfx (s, sc->speed, sc->width, data + info.dataofs);
-
-	COM_FreeFile(data);
 
 	return sc;
 }
