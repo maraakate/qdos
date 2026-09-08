@@ -1076,7 +1076,7 @@ void R_RenderView_ (void)
 // done in screen.c
 	Sys_LowFPPrecision ();
 
-	if (!cl_entities[0].model || !cl.worldmodel)
+	if (!r_worldentity.model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
 	R_EdgeDrawing ();

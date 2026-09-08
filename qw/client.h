@@ -29,7 +29,7 @@ typedef struct
 {
 	char            name[16];
 	qboolean	failedload;		// the name isn't a valid skin
-	void *data;
+	cache_user_t	cache;
 } skin_t;
 
 #ifdef GAMESPY /* FS: Gamespy stuff */

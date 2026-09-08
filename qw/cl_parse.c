@@ -277,6 +277,7 @@ void Model_Precache (void)
 	// all done
 	cl.worldmodel = cl.model_precache[1];
 	R_NewMap ();
+	Hunk_Check ();		// make sure nothing is hurt
 
 	// done with modellist, request first of static signon messages
 	MSG_WriteByte (&cls.netchan.message, clc_stringcmd);

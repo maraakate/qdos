@@ -518,12 +518,13 @@ void CL_ClearState (void)
 
 	Com_DPrintf (DEVELOPER_MSG_MEM, "Clearing memory\n");
 	D_FlushCaches ();
-	Mod_FreeAll ();
+	Mod_ClearAll ();
 	R_ClearDynamic(); /* FS */
 
-	CL_ClearTEnts ();
+	if (host_hunklevel)  // FIXME: check this...
+		Hunk_FreeToLowMark (host_hunklevel);
 
-	Z_FreeTags(TAG_LEVEL);
+	CL_ClearTEnts ();
 
 // wipe the entire cl structure
 	memset (&cl, 0, sizeof(cl));
@@ -1795,8 +1796,7 @@ void Host_Init (quakeparms_t *parms)
 		return;
 	}
 
-	z_chain.next = z_chain.prev = &z_chain;
-
+	Memory_Init (parms->membase, parms->memsize);
 	Cbuf_Init ();
 	Cmd_Init ();
 	Cvar_Init ();
@@ -1837,14 +1837,16 @@ void Host_Init (quakeparms_t *parms)
    
 	R_InitTextures ();
  
-	host_basepal = (byte *)COM_LoadFile("gfx/palette.lmp");
+	host_basepal = (byte *)COM_LoadHunkFile ("gfx/palette.lmp");
+
 	if (!host_basepal)
 	{
 		Sys_Error ("Couldn't load gfx/palette.lmp");
 		return;
 	}
 
-	host_colormap = (byte *)COM_LoadFile("gfx/colormap.lmp");
+	host_colormap = (byte *)COM_LoadHunkFile ("gfx/colormap.lmp");
+
 	if (!host_colormap)
 	{
 		Sys_Error ("Couldn't load gfx/colormap.lmp");
@@ -1874,6 +1876,9 @@ void Host_Init (quakeparms_t *parms)
 	Cbuf_AddText ("echo Type connect <internet address> or use GameSpy to connect to a game.\n");
 	Cbuf_AddText ("cl_warncmd 1\n");
 	quakerc_init = false;
+
+	Hunk_AllocName (0, "-HOST_HUNKLEVEL-");
+	host_hunklevel = Hunk_LowMark ();
 
 	host_initialized = true;
 
@@ -1915,11 +1920,6 @@ void Host_Shutdown(void)
 	if (host_basepal)
 		VID_Shutdown();
 	Cmd_RemoveAllCommands();
-
-	if (wad_base)
-		Z_Free(wad_base);
-
-	wad_base = NULL;
 }
 
 void CL_Flashlight_f (void) /* FS: Flashlight */

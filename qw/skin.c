@@ -69,7 +69,7 @@ void Skin_Find (player_info_t *sc)
 		if (!strcmp (name, skins[i].name))
 		{
 			sc->skin = &skins[i];
-			sc->skin->data = Skin_Cache (sc->skin);
+			Skin_Cache (sc->skin);
 			return;
 		}
 	}
@@ -123,7 +123,7 @@ byte	*Skin_Cache (skin_t *skin)
 		return NULL;
 	}
 
-	out = skin->data;
+	out = Cache_Check (&skin->cache);
 	if (out)
 	{
 		return out;
@@ -135,12 +135,12 @@ byte	*Skin_Cache (skin_t *skin)
 
 	Com_DPrintf (DEVELOPER_MSG_IO, "Loading skin: %s\n", name); /* FS */
 
-	raw = COM_LoadFile(name);
+	raw = COM_LoadTempFile(name);
 	if (!raw)
 	{
 		Com_Printf ("Couldn't load skin %s\n", name);
 		Com_sprintf (name, sizeof(name), "skins/%s.pcx", baseskin->string);
-		raw = COM_LoadFile(name);
+		raw = COM_LoadTempFile(name);
 		if (!raw)
 		{
 			skin->failedload = true;
@@ -166,7 +166,7 @@ byte	*Skin_Cache (skin_t *skin)
 		return NULL;
 	}
 	
-	out = Z_Malloc(320 * MAX_LBM_HEIGHT); /* FS: Was 320*200 */
+	out = Cache_Alloc (&skin->cache, 320*MAX_LBM_HEIGHT, skin->name); /* FS: Was 320*200 */
 	if (!out)
 	{
 		Sys_Error ("Skin_Cache: couldn't allocate");
@@ -182,7 +182,7 @@ byte	*Skin_Cache (skin_t *skin)
 		{
 			if (raw - (byte*)pcx > com_filesize) 
 			{
-				Z_Free(out);
+				Cache_Free (&skin->cache);
 				skin->failedload = true;
 				Com_Printf ("Skin %s was malformed.  You should delete it.\n", name);
 				return NULL;
@@ -194,7 +194,7 @@ byte	*Skin_Cache (skin_t *skin)
 				runLength = dataByte & 0x3F;
 				if (raw - (byte*)pcx > com_filesize) 
 				{
-					Z_Free(out);
+					Cache_Free (&skin->cache);
 					skin->failedload = true;
 					Com_Printf ("Skin %s was malformed.  You should delete it.\n", name);
 					return NULL;
@@ -206,7 +206,7 @@ byte	*Skin_Cache (skin_t *skin)
 
 			// skin sanity check
 			if (runLength + x > pcx->xmax + 2) {
-				Z_Free(out);
+				Cache_Free (&skin->cache);
 				skin->failedload = true;
 				Com_Printf ("Skin %s was malformed.  You should delete it.\n", name);
 				return NULL;
@@ -221,7 +221,7 @@ byte	*Skin_Cache (skin_t *skin)
 	
 	if ( raw - (byte *)pcx > com_filesize)
 	{
-		Z_Free(out);
+		Cache_Free (&skin->cache);
 		skin->failedload = true;
 		Com_Printf ("Skin %s was malformed.  You should delete it.\n", name);
 		return NULL;
@@ -336,6 +336,7 @@ void Skin_Precache (void)
 		MSG_WriteByte (&cls.netchan.message, clc_stringcmd);
 		MSG_WriteString (&cls.netchan.message,
 			va("begin %i", cl.servercount));
+		Cache_Report ();		// print remaining memory
 	}
 }
 
@@ -345,9 +346,8 @@ void	Skin_FreeAll (void)
 
 	for (i=0 ; i<numskins ; i++)
 	{
-		if (skins[i].data)
-			Z_Free(skins[i].data);
-		skins[i].data = NULL;
+		if (skins[i].cache.data)
+			Cache_Free (&skins[i].cache);
 	}
 
 	numskins = 0;
