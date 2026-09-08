@@ -21,9 +21,14 @@ GLQUAKE=0
 # common objects shared by Quake 1 and QuakeWorld
 COMMON=../common
 
-CFLAGS  = -g -Wall -Werror -O2 -DNDEBUG -DQUAKE1 -fno-strict-aliasing
-CFLAGS += -I. -I../common
+ifeq ($(DEBUG),1)
+CFLAGS  = -g -Wall -Werror -O0 -DDEBUG -DQUAKE1 -fno-strict-aliasing
 CFLAGS += -fomit-frame-pointer
+else
+CFLAGS  = -g -Wall -Werror -O2 -DNDEBUG -DQUAKE1 -fno-strict-aliasing
+CFLAGS += -fomit-frame-pointer
+endif
+CFLAGS += -I. -I../common
 LIBS    =
 EXE     = qdos.exe
 

@@ -71,13 +71,8 @@ void W_LoadWadFile (char *filename)
 	wadinfo_t		*header;
 	unsigned		i;
 	int				infotableofs;
-
-	if (wad_base)
-	{
-		Z_Free(wad_base);
-	}
-
-	wad_base = COM_LoadFile(filename);
+	
+	wad_base = COM_LoadHunkFile (filename);
 	if (!wad_base)
 	{
 		Sys_Error ("W_LoadWadFile: couldn't load %s", filename);

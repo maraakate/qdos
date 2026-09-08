@@ -113,7 +113,7 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 
 //	Com_Printf ("loading %s\n",namebuffer);
 	
-	data = COM_LoadFile(namebuffer);
+	data = COM_LoadFile(namebuffer, 0);
 	if (!data)
 	{
 		Com_Printf ("Couldn't load %s\n", namebuffer);

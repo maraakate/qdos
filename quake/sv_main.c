@@ -1400,7 +1400,7 @@ void SV_SpawnServer (char *server, qboolean loadgame)
 
 	// allocate server memory
 	sv.max_edicts = CLAMP (MIN_EDICTS, max_edicts->intValue, MAX_EDICTS); //johnfitz -- max_edicts cvar
-	sv.edicts = Z_TagMalloc(sv.max_edicts * pr_edict_size, TAG_LEVEL);
+	sv.edicts = Hunk_AllocName (sv.max_edicts*pr_edict_size, "edicts");
 
 	sv.datagram.maxsize = max_datagram;//sizeof(sv.datagram_buf);
 	sv.datagram.cursize = 0;
@@ -1489,7 +1489,7 @@ void SV_SpawnServer (char *server, qboolean loadgame)
 		Com_sprintf(filename, sizeof(filename), "maps/%s.ent", server);
 		Com_DPrintf(DEVELOPER_MSG_IO, "Attempting to load external ent file %s...\n", filename);
 
-		entitystring = (char *)COM_LoadFile(filename);
+		entitystring = (char *)COM_LoadHunkFile(filename);
 		if (!entitystring)
 			Com_DPrintf(DEVELOPER_MSG_IO, "No external ent file found.\n");
 		else
@@ -1498,7 +1498,6 @@ void SV_SpawnServer (char *server, qboolean loadgame)
 		if (entitystring && entitystring[0] != '\0') /* FS: Check to see if it's blank. */
 		{
 			Con_Warning("%s.ent is blank!  Defaulting to %s.bsp.\n", filename, server);
-			Z_Free(entitystring);
 			entitystring = NULL;
 		}
 	}

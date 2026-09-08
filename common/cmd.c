@@ -114,7 +114,7 @@ void Cbuf_InsertText (char *text)
 	templen = cmd_text.cursize;
 	if (templen)
 	{
-		temp = Z_Malloc (templen);
+		temp = calloc (templen, 1);
 		memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
@@ -128,7 +128,7 @@ void Cbuf_InsertText (char *text)
 	if (templen)
 	{
 		SZ_Write (&cmd_text, temp, templen);
-		Z_Free (temp);
+		free (temp);
 	}
 }
 
@@ -261,7 +261,7 @@ void Cmd_StuffCmds_f (void)
 
 	len = s + 1;
 
-	text = Z_Malloc (len);
+	text = calloc (len, 1);
 	text[0] = 0;
 	for (i=1 ; i<com_argc ; i++)
 	{
@@ -273,7 +273,7 @@ void Cmd_StuffCmds_f (void)
 	}
 
 // pull out the commands
-	build = Z_Malloc (len);
+	build = calloc (len, 1);
 	build[0] = 0;
 
 	for (i=0 ; i<s-1 ; i++)
@@ -298,8 +298,8 @@ void Cmd_StuffCmds_f (void)
 	if (build[0])
 		Cbuf_InsertText (build);
 
-	Z_Free (text);
-	Z_Free (build);
+	free (text);
+	free (build);
 #endif
 }
 
@@ -336,7 +336,7 @@ void Cmd_Exec_f (void)
 		}
 	}
 
-	f = (char *)COM_LoadFile(s);
+	f = (char *)COM_LoadFile(s, 0);
 	if (!f)
 	{
 		Com_Printf ("couldn't exec %s\n",s);

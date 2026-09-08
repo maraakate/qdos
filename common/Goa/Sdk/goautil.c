@@ -294,9 +294,12 @@ void gs_encode (uchar *ins, int size, uchar *result)
 	uchar  kwart[4];
 
 	i=0;
+	memset(&trip, 0, sizeof(trip));
+
 	while (i < size)
 	{
 		for (pos=0 ; pos <= 2 ; pos++, i++)
+		{
 			if (i < size) trip[pos] = *ins++;
 			else trip[pos] = '\0';
 			kwart[0] =   (trip[0])       >> 2;
@@ -304,6 +307,7 @@ void gs_encode (uchar *ins, int size, uchar *result)
 			kwart[2] = (((trip[1]) & 15) << 2) + ((trip[2]) >> 6);
 			kwart[3] =   (trip[2]) & 63;
 			for (pos=0; pos <= 3; pos++) *result++ = encode_ct(kwart[pos]);
+		}
 	}
 	*result='\0';
 }

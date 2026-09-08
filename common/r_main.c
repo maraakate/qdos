@@ -51,6 +51,8 @@ int			r_clipflags;
 
 byte		*r_warpbuffer;
 
+byte		*r_stack_start;
+
 entity_t		r_worldentity;
 
 //
@@ -152,6 +154,7 @@ void R_NetGraph (void);
 void R_ZGraph (void);
 
 /* FS: Dynamic allocation stuff */
+int bedgesMark;
 static qboolean map_initialized = false;
 
 /*
@@ -165,7 +168,7 @@ void	R_InitTextures (void)
 	byte	*dest;
 	
 // create a simple checkerboard texture for the default
-	r_notexture_mip = Z_Malloc (sizeof(texture_t) + 16*16+8*8+4*4+2*2);
+	r_notexture_mip = Hunk_AllocName (sizeof(texture_t) + 16*16+8*8+4*4+2*2, "notexture");
 	
 	r_notexture_mip->width = r_notexture_mip->height = 16;
 	r_notexture_mip->offsets[0] = sizeof(texture_t);
@@ -194,6 +197,11 @@ R_Init
 */
 void R_Init (void)
 {
+	int	dummy;
+	
+// get stack position so we can guess if we are going to overflow
+	r_stack_start = (byte *)&dummy;
+	
 	R_InitTurb ();
 	
 	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);
@@ -265,7 +273,6 @@ void R_Init (void)
 	D_Init ();
 }
 
-static surf_t *oldsurfaces;
 /*
 ===============
 R_NewMap
@@ -295,7 +302,7 @@ void R_NewMap (void)
 
 	if (r_cnumsurfs > NUMSTACKSURFACES)
 	{
-		oldsurfaces = surfaces = Z_Malloc (r_cnumsurfs * sizeof(surf_t));
+		surfaces = Hunk_AllocName (r_cnumsurfs * sizeof(surf_t), "surfaces");
 		surface_p = surfaces;
 		surf_max = &surfaces[r_cnumsurfs];
 		r_surfsonstack = false;
@@ -323,13 +330,17 @@ void R_NewMap (void)
 	}
 	else
 	{
-		auxedges = Z_Malloc (r_numallocatededges * sizeof(edge_t));
+		auxedges = Hunk_AllocName (r_numallocatededges * sizeof(edge_t),
+								   "edges");
 	}
 
+	bedgesMark = Hunk_LowMark ();
+	Hunk_AllocName(0, "-Dynamic-");
+
 	if(r_maxbmodeledges->intValue > MIN_BMODEL_EDGES) /* FS: Dynamic allocation of bmodel edges */
-		bedges = Z_Malloc (r_maxbmodeledges->intValue * sizeof(bedge_t));
+		bedges = Hunk_AllocName (r_maxbmodeledges->intValue * sizeof(bedge_t), "bedges");
 	else
-		bedges = Z_Malloc (MIN_BMODEL_EDGES * sizeof(bedge_t));
+		bedges = Hunk_AllocName (MIN_BMODEL_EDGES * sizeof(bedge_t), "bedges");
 
 	r_dowarpold = false;
 	r_viewchanged = false;
@@ -1032,7 +1043,7 @@ R_RenderView
 r_refdef must be set before the first call
 ================
 */
-void R_RenderView (void)
+void R_RenderView_ (void)
 {
 	byte	warpbuffer[WARP_WIDTH * WARP_HEIGHT];
 
@@ -1065,7 +1076,7 @@ void R_RenderView (void)
 // done in screen.c
 	Sys_LowFPPrecision ();
 
-	if (!r_worldentity.model || !cl.worldmodel)
+	if (!cl_entities[0].model || !cl.worldmodel)
 		Sys_Error ("R_RenderView: NULL worldmodel");
 
 	R_EdgeDrawing ();
@@ -1132,6 +1143,27 @@ void R_RenderView (void)
 	Sys_HighFPPrecision ();
 }
 
+void R_RenderView (void)
+{
+	int		dummy;
+	int		delta;
+	
+	delta = (byte *)&dummy - r_stack_start;
+	if (delta < -10000 || delta > 10000)
+		Sys_Error ("R_RenderView: called without enough stack");
+
+	if ( Hunk_LowMark() & 3 )
+		Sys_Error ("Hunk is missaligned");
+
+	if ( (long)(&dummy) & 3 )
+		Sys_Error ("Stack is missaligned");
+
+	if ( (long)(&r_warpbuffer) & 3 )
+		Sys_Error ("Globals are missaligned");
+
+	R_RenderView_ ();
+}
+
 /*
 ================
 R_InitTurb
@@ -1150,27 +1182,78 @@ void R_InitTurb (void)
 
 void R_ClearDynamic (void) /* FS */
 {
-	if (bedges)
-		Z_Free(bedges);
+	if (bedgesMark)
+	{
+		Hunk_FreeToLowMark (bedgesMark);
+	}
+
+	bedgesMark = 0;
 	bedges = NULL;
-
-	if (auxedges)
-		Z_Free(auxedges);
-	auxedges = NULL;
-
-	if (oldsurfaces)
-		Z_Free(oldsurfaces);
-	oldsurfaces = NULL;
-
-	r_maxedgesseen = 0;
-	r_maxsurfsseen = 0;
 }
 
 void R_Restart_f (void)
 {
+#if 0
+	/* FS: FIXME: This causes a memory leak until next map load.  But, currently it's better than changing r_maxbmodeledges to a higher value and bombing out */
+	r_viewleaf = NULL;
+	R_ClearParticles ();
+
+	r_cnumsurfs = r_maxsurfs->value;
+
+	if (r_cnumsurfs <= MINSURFACES)
+		r_cnumsurfs = MINSURFACES;
+
+	if (r_cnumsurfs > NUMSTACKSURFACES)
+	{
+		surfaces = Hunk_AllocName (r_cnumsurfs * sizeof(surf_t), "surfaces");
+		surface_p = surfaces;
+		surf_max = &surfaces[r_cnumsurfs];
+		r_surfsonstack = false;
+	// surface 0 doesn't really exist; it's just a dummy because index 0
+	// is used to indicate no edge attached to surface
+		surfaces--;
+		R_SurfacePatch ();
+	}
+	else
+	{
+		r_surfsonstack = true;
+	}
+
+	r_maxedgesseen = 0;
+	r_maxsurfsseen = 0;
+
+	r_numallocatededges = r_maxedges->value;
+
+	if (r_numallocatededges < MINEDGES)
+		r_numallocatededges = MINEDGES;
+
+	if (r_numallocatededges <= NUMSTACKEDGES)
+	{
+		auxedges = NULL;
+	}
+	else
+	{
+		auxedges = Hunk_AllocName (r_numallocatededges * sizeof(edge_t),
+								   "edges");
+	}
+
+#endif
+	if(bedgesMark)
+		Hunk_FreeToLowMark(bedgesMark);
+
+	bedges = NULL;
+
+	bedgesMark = Hunk_LowMark ();
+	Hunk_AllocName(0, "-Dynamic-");
+
+	if(r_maxbmodeledges->intValue > MIN_BMODEL_EDGES) /* FS: Dynamic allocation of bmodel edges */
+		bedges = Hunk_AllocName (r_maxbmodeledges->intValue * sizeof(bedge_t), "bedges");
+	else
+		bedges = Hunk_AllocName (MIN_BMODEL_EDGES * sizeof(bedge_t), "bedges");
+
+	r_dowarpold = false;
+	r_viewchanged = true;
 }
 
-void R_Shutdown (void)
-{
-	//R_ClearDynamic();
-}
+void R_Shutdown (void) { }
+

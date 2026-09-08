@@ -44,6 +44,14 @@ unsigned int _stklen = 1048576; /* need a 1MB stack */
 #include "dosisms.h"
 #include "sys_dxe.h"
 
+#ifdef QUAKE1
+#define MINIMUM_WIN_MEMORY                      0x800000
+#else
+#define MINIMUM_WIN_MEMORY                      0xf00000
+#endif // QUAKE1
+
+#define MINIMUM_WIN_MEMORY_LEVELPAK     (MINIMUM_WIN_MEMORY + 0x100000)
+
 #define STDOUT  1
 
 #define	KEYBUF_SIZE	256
@@ -52,6 +60,7 @@ static int	keybuf_head = 0;
 static int	keybuf_tail = 0;
 
 static quakeparms_t	quakeparms;
+static int	minmem;
 
 float			fptest_temp;
 
@@ -102,6 +111,9 @@ static unsigned long virtualMemStart;
 void MaskExceptions (void);
 void Sys_PushFPCW_SetHigh (void);
 void Sys_PopFPCW (void);
+
+#define LEAVE_FOR_CACHE (512*1024)		//FIXME: tune
+#define LOCKED_FOR_MALLOC (128*1024)	//FIXME: tune
 
 /* FS: QW needs it badly -- See http://www.delorie.com/djgpp/doc/libc/libc_380.html for more information
 
@@ -157,6 +169,183 @@ static void Sys_DetectWin95 (void)
 		unlockmem = lockmem && !lockunlockmem;
 	}
 }
+
+
+void *dos_getmaxlockedmem(int *size)
+{
+	__dpmi_free_mem_info	meminfo;
+	__dpmi_meminfo			info;
+	int						working_size;
+	void					*working_memory;
+	int						last_locked;
+	int						i, j, extra, allocsize; /* FS: 2GB Fix */
+	static char				*msg = "Locking data...";
+	byte					*x;
+	unsigned long			ul; /* FS: 2GB Fix */
+
+// first lock all the current executing image so the locked count will
+// be accurate.  It doesn't hurt to lock the memory multiple times
+	last_locked = __djgpp_selector_limit + 1;
+	info.size = last_locked - 4096;
+	info.address = __djgpp_base_address + 4096;
+
+	if (lockmem)
+	{
+		if(__dpmi_lock_linear_region(&info))
+		{
+			Sys_Error ("Lock of current memory at 0x%lx for %ldKb failed!\n",
+						info.address, info.size/1024);
+		}
+	}
+
+	__dpmi_get_free_memory_information(&meminfo);
+
+	if (!win95)             /* Not windows or earlier than Win95 */
+	{
+		ul = meminfo.maximum_locked_page_allocation_in_pages * 4096; /* FS: 2GB Fix */
+	}
+	else
+	{
+		ul = meminfo.largest_available_free_block_in_bytes -
+		LEAVE_FOR_CACHE; /* FS: 2GB Fix */
+	}
+
+	if (ul > 0x7fffffff)
+		ul = 0x7fffffff; /* limit to 2GB */
+	working_size = (int) ul;
+	working_size &= ~0xffff;                /* Round down to 64K */
+	working_size += 0x10000;
+
+	do
+	{
+		working_size -= 0x10000;                /* Decrease 64K and try again */
+		working_memory = sbrk(working_size);
+	} while (working_memory == (void *)-1);
+
+	extra = 0xfffc - ((unsigned)sbrk(0) & 0xffff);
+
+	if (extra > 0)
+	{
+		sbrk(extra);
+		working_size += extra;
+	}
+
+// now grab the memory
+	info.address = last_locked + __djgpp_base_address;
+
+	if (!win95)
+	{
+	    info.size = __djgpp_selector_limit + 1 - last_locked;
+
+		while (info.size > 0 && __dpmi_lock_linear_region(&info))
+		{
+			info.size -= 0x1000;
+			working_size -= 0x1000;
+			sbrk(-0x1000);
+		}
+	}
+	else
+	{                       /* Win95 section */
+		j = COM_CheckParm("-winmem");
+
+		if (standard_quake)
+			minmem = MINIMUM_WIN_MEMORY;
+		else
+			minmem = MINIMUM_WIN_MEMORY_LEVELPAK;
+
+		if (j)
+		{
+			allocsize = ((int)(atoi(com_argv[j+1]))) * 0x100000 +
+					LOCKED_FOR_MALLOC;
+
+			if (allocsize < (minmem + LOCKED_FOR_MALLOC))
+				allocsize = minmem + LOCKED_FOR_MALLOC;
+		}
+		else
+		{
+			allocsize = minmem + LOCKED_FOR_MALLOC;
+		}
+
+		if (!lockmem)
+		{
+		// we won't lock, just sbrk the memory
+			info.size = allocsize;
+			goto UpdateSbrk;
+		}
+
+		// lock the memory down
+		write (STDOUT, msg, strlen (msg));
+
+		for (j=allocsize ; j>(minmem + LOCKED_FOR_MALLOC) ;
+			 j -= 0x100000)
+		{
+			info.size = j;
+	
+			if (!__dpmi_lock_linear_region(&info))
+				goto Locked;
+	
+			write (STDOUT, ".", 1);
+		}
+
+	// finally, try with the absolute minimum amount
+		for (i=0 ; i<10 ; i++)
+		{
+			info.size = minmem + LOCKED_FOR_MALLOC;
+
+			if (!__dpmi_lock_linear_region(&info))
+				goto Locked;
+		}
+
+		Sys_Error ("Can't lock memory; %ld Mb lockable RAM required. "
+					"Try shrinking smartdrv.", info.size / 0x100000);
+
+Locked:
+
+UpdateSbrk:
+
+		info.address += info.size;
+		info.address -= __djgpp_base_address + 4; // ending point, malloc align
+		working_size = info.address - (int)working_memory;
+		sbrk(info.address-(int)sbrk(0));                // negative adjustment
+	}
+
+
+	if (lockunlockmem)
+	{
+		__dpmi_unlock_linear_region (&info);
+		printf ("Locked and unlocked %d Mb data\n", working_size / 0x100000);
+	}
+	else if (lockmem)
+	{
+		printf ("Locked %d Mb data\n", working_size / 0x100000);
+	}
+	else
+	{
+		printf ("Allocated %d Mb data\n", working_size / 0x100000);
+	}
+
+// touch all the memory to make sure it's there. The 16-page skip is to
+// keep Win 95 from thinking we're trying to page ourselves in (we are
+// doing that, of course, but there's no reason we shouldn't)
+	x = (byte *)working_memory;
+
+	for (j=0 ; j<4 ; j++) /* FS: 2GB Fix */
+	{
+		for (i=0 ; i<(working_size - 16 * 0x1000) ; i += 4)
+		{
+			sys_checksum += *(int *)&x[i];
+			sys_checksum += *(int *)&x[i + 16 * 0x1000];
+		}
+	}
+
+// give some of what we locked back for malloc before returning.  Done
+// by cheating and passing a negative value to sbrk
+	working_size -= LOCKED_FOR_MALLOC;
+	sbrk( -(LOCKED_FOR_MALLOC));
+	*size = working_size;
+	return working_memory;
+}
+
 
 /*
 ============
@@ -242,6 +431,7 @@ void Sys_Shutdown(void)
 	{
 		dos_unlockmem (&start_of_memory,
 					   end_of_memory - (int)&start_of_memory);
+		dos_unlockmem (quakeparms.membase, quakeparms.memsize);
 	}
 }
 
@@ -345,9 +535,9 @@ void Sys_Quit (void)
 
 	// load the sell screen before shutting everything down
 	if (registered->intValue)
-		d = COM_LoadFile ("end2.bin");
+		d = COM_LoadHunkFile ("end2.bin");
 	else
-		d = COM_LoadFile ("end1.bin");
+		d = COM_LoadHunkFile ("end1.bin");
 	if (d)
 		memcpy (screen, d, sizeof(screen));
 
@@ -421,6 +611,39 @@ Sys_DoubleTime
 double Sys_DoubleTime (void)
 {
 	return (double) uclock() / (double) UCLOCKS_PER_SEC; /* FS: Accurate Clock (QIP) */
+}
+
+/*
+================
+Sys_GetMemory
+================
+*/
+void Sys_GetMemory(void)
+{
+	int j;
+
+	quakeparms.memsize = 0x2000000;
+#ifdef QUAKE1
+	if (extended_mod)  /* FS: For big boy mods */
+		quakeparms.memsize = 0x4000000;
+#endif
+
+	if ((j = COM_CheckParm("-mem")) != 0 && j < com_argc-1)
+		quakeparms.memsize = atoi(com_argv[j+1]) * 1024 * 1024;
+
+	if ((j = COM_CheckParm ("-heapsize")) != 0 && j < com_argc-1)
+		quakeparms.memsize = atoi(com_argv[j+1]) * 1024;
+
+	quakeparms.membase = malloc (quakeparms.memsize);
+
+	printf("malloc'd: %ld\n", quakeparms.memsize);
+
+	if (!COM_CheckParm ("-noclear")) /* FS: Wanted the option */
+	{
+		printf("Clearing allocated memory...\n");
+		memset(quakeparms.membase,0x0,quakeparms.memsize); // JASON: Clear memory on startup
+		printf("Done!  Continuing to load Quake.\n");
+	}
 }
 
 static int Sys_Get_Physical_Memory(void) /* FS: From DJGPP tutorial */
@@ -578,6 +801,7 @@ int main (int c, char **v)
 	Sys_DetectLFN ();
 	Sys_DetectWin95 ();
 	Sys_PageInProgram ();
+	Sys_GetMemory ();
 
 	atexit (Sys_AtExit);    // in case we crash
 

@@ -1403,7 +1403,7 @@ void BuildSurfaceDisplayList (msurface_t *fa)
 	//
 	// draw texture
 	//
-	poly = Z_TagMalloc (sizeof(glpoly_t) + (lnumverts-4) * VERTEXSIZE*sizeof(float), TAG_LEVEL);
+	poly = Hunk_Alloc (sizeof(glpoly_t) + (lnumverts-4) * VERTEXSIZE*sizeof(float));
 	poly->next = fa->polys;
 	poly->flags = fa->flags;
 	fa->polys = poly;

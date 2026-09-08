@@ -57,7 +57,8 @@ entity_t		cl_static_entities[MAX_STATIC_ENTITIES];
 lightstyle_t	cl_lightstyle[MAX_LIGHTSTYLES];
 dlight_t		cl_dlights[MAX_DLIGHTS];
 
-entity_t		cl_entities[MAX_EDICTS];
+entity_t		*cl_entities; //johnfitz -- was a static array, now on hunk
+int				cl_max_edicts; //johnfitz -- only changes when new map loads
 
 int				cl_numvisedicts;
 entity_t		*cl_visedicts[MAX_VISEDICTS];
@@ -118,7 +119,11 @@ void CL_ClearState (void)
 	memset (cl_lightstyle, 0, sizeof(cl_lightstyle));
 	memset (cl_temp_entities, 0, sizeof(cl_temp_entities));
 	memset (cl_beams, 0, sizeof(cl_beams));
-	memset (cl_entities, 0, sizeof(cl_entities));
+
+	//johnfitz -- cl_entities is now dynamically allocated
+	cl_max_edicts = CLAMP (MIN_EDICTS,max_edicts->intValue,MAX_EDICTS);
+	cl_entities = Hunk_AllocName (cl_max_edicts*sizeof(entity_t), "cl_entities");
+	//johnfitz
 
 //
 // allocate the efrags and chain together into a free list
@@ -252,6 +257,7 @@ void CL_SignonReply (void)
 	case 3:  
 		MSG_WriteByte (&cls.message, clc_stringcmd);
 		MSG_WriteString (&cls.message, "begin");
+		Cache_Report ();	  // print remaining memory
 		break;
 		
 	case 4:

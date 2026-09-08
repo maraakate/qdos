@@ -556,6 +556,14 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (parms.memsize < (lpBuffer.dwTotalPhys >> 1))
 		parms.memsize = lpBuffer.dwTotalPhys >> 1;
 
+	if (parms.memsize > MAXIMUM_WIN_MEMORY)
+		parms.memsize = MAXIMUM_WIN_MEMORY;
+
+	parms.membase = malloc (parms.memsize);
+
+	if (!parms.membase)
+		Sys_Error ("Not enough memory free; check disk space\n");
+
 	tevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	if (!tevent)

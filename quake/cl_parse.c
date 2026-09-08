@@ -148,7 +148,7 @@ entity_t	*CL_EntityNum (int num)
 
 	if (num >= cl.num_entities)
 	{
-		if (num >= MAX_EDICTS)
+		if (num >= cl_max_edicts) //johnfitz -- no more MAX_EDICTS
 			Host_Error ("CL_EntityNum: %i is an invalid number",num);
 		while (cl.num_entities<=num)
 		{
@@ -212,7 +212,7 @@ void CL_ParseStartSoundPacket(void)
 		Host_Error ("CL_ParseStartSoundPacket: %i > MAX_SOUNDS", sound_num);
 	//johnfitz
 
-	if (ent > MAX_EDICTS)
+	if (ent > cl_max_edicts) //johnfitz -- no more MAX_EDICTS
 		Host_Error ("CL_ParseStartSoundPacket: ent = %i", ent);
 	
 	for (i=0 ; i<3 ; i++)
@@ -326,7 +326,7 @@ void CL_ParseServerInfo (void)
 	{
 		Host_Error ("Bad maxclients (%u) from server", cl.maxclients);
 	}
-	cl.scores = Z_TagMalloc (cl.maxclients*sizeof(*cl.scores), TAG_LEVEL);
+	cl.scores = Hunk_AllocName (cl.maxclients*sizeof(*cl.scores), "scores");
 
 // parse gametype
 	cl.gametype = MSG_ReadByte ();
@@ -359,7 +359,7 @@ void CL_ParseServerInfo (void)
 			Host_Error ("Server sent too many model precaches");
 		}
 		Q_strlcpy (model_precache[nummodels], str, sizeof(model_precache[nummodels]));
-		Mod_ForName(str, false);
+		Mod_TouchModel (str);
 	}
 
 // johnfitz -- check for excessive models
@@ -421,6 +421,8 @@ void CL_ParseServerInfo (void)
 	//messages to be duplicates if the map has changed in between
 	con_lastcenterstring[0] = 0;
 	//johnfitz
+
+	Hunk_Check ();		// make sure nothing is hurt
 
 	noclip_anglehack = false;		// noclip is turned off at start
 
@@ -1337,6 +1339,7 @@ CL_PlayBackgroundTrack
 */
 void CL_PlayBackgroundTrack (int track)
 {
+#if 0
 	char	name[MAX_QPATH], *p;
 	int	have_extmusic;
 
@@ -1409,5 +1412,6 @@ void CL_PlayBackgroundTrack (int track)
 	{
 		CDAudio_Play((byte)track, true);
 	}
+#endif
 }
 // end Knightmare

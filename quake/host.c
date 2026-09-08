@@ -46,6 +46,8 @@ double		oldrealtime;			// last frame run
 int			host_framecount;
 int			fps_count; /* FS: for show_fps */
 
+int			host_hunklevel;
+
 int			minimum_memory;
 
 client_t *host_client;		  // current client
@@ -97,17 +99,17 @@ Max_Edicts_f -- johnfitz
 */
 void Max_Edicts_f (void)
 {
-	static int oldval = 1024; //must match the default value for max_edicts
+	static float oldval = 1024; //must match the default value for max_edicts
 
 	//TODO: clamp it here?
 
-	if (max_edicts->intValue == oldval)
+	if (max_edicts->value == oldval)
 		return;
 
 	if (cls.state == ca_connected || sv.active)
 		Com_Printf ("changes will not take effect until the next level load.\n");
 
-	oldval = max_edicts->intValue;
+	oldval = max_edicts->value;
 }
 
 /*
@@ -213,7 +215,7 @@ void  Host_FindMaxClients (void)
 	svs.maxclientslimit = svs.maxclients;
 	if (svs.maxclientslimit < 4)
 		svs.maxclientslimit = 4;
-	svs.clients = Z_Malloc (svs.maxclientslimit*sizeof(client_t));
+	svs.clients = Hunk_AllocName (svs.maxclientslimit*sizeof(client_t), "clients");
 
 	if (svs.maxclients > 1)
 		Cvar_SetValue ("deathmatch", 1.0);
@@ -514,11 +516,6 @@ void Host_ShutdownServer(qboolean crash)
 		if (host_client->active)
 			SV_DropClient(crash);
 
-	if (entitystring)
-		Z_Free(entitystring);
-
-	entitystring = NULL;
-
 //
 // clear structures
 //
@@ -541,17 +538,13 @@ void Host_ClearMemory (void)
 
 	Com_DPrintf (DEVELOPER_MSG_MEM, "Clearing memory\n");
 	D_FlushCaches ();
-	Mod_FreeAll ();
+	Mod_ClearAll ();
 #ifndef GLQUAKE
 	R_ClearDynamic(); /* FS */
 #endif
 
-	if (entitystring)
-		Z_Free(entitystring);
-
-	entitystring = NULL;
-
-	Z_FreeTags(TAG_LEVEL);
+	if (host_hunklevel)
+		Hunk_FreeToLowMark (host_hunklevel);
 
 	cls.signon = 0;
 	memset (&sv, 0, sizeof(sv));
@@ -894,12 +887,15 @@ Host_Init
 */
 void Host_Init (quakeparms_t *parms)
 {
-	int temp;
+	int	temp;
 
 	if (standard_quake)
 		minimum_memory = MINIMUM_MEMORY;
 	else
 		minimum_memory = MINIMUM_MEMORY_LEVELPAK;
+
+	if (COM_CheckParm ("-minmemory"))
+		parms->memsize = minimum_memory;
 
 	host_parms = *parms;
 
@@ -909,11 +905,10 @@ void Host_Init (quakeparms_t *parms)
 		return;
 	}
 
-	z_chain.next = z_chain.prev = &z_chain;
-
 	com_argc = parms->argc;
 	com_argv = parms->argv;
 
+	Memory_Init (parms->membase, parms->memsize);
 	Cbuf_Init ();
 	Cmd_Init ();
 	Cvar_Init();
@@ -959,14 +954,14 @@ void Host_Init (quakeparms_t *parms)
 
 	if (!dedicated->intValue)
 	{
-		host_basepal = (byte *)COM_LoadFile ("gfx/palette.lmp");
+		host_basepal = (byte *)COM_LoadHunkFile ("gfx/palette.lmp");
 		if (!host_basepal)
 		{
 			Sys_Error ("Couldn't load gfx/palette.lmp");
 			return;
 		}
 
-		host_colormap = (byte *)COM_LoadFile ("gfx/colormap.lmp");
+		host_colormap = (byte *)COM_LoadHunkFile ("gfx/colormap.lmp");
 		if (!host_colormap)
 		{
 			Sys_Error ("Couldn't load gfx/colormap.lmp");
@@ -999,6 +994,8 @@ void Host_Init (quakeparms_t *parms)
 	quakerc_init = false;
 
 	Cvar_SetValue("cl_unbindall_protection", temp);
+	Hunk_AllocName (0, "-HOST_HUNKLEVEL-");
+	host_hunklevel = Hunk_LowMark ();
 
 	host_initialized = true;
 
@@ -1039,16 +1036,6 @@ void Host_Shutdown(void)
 	{
 		VID_Shutdown();
 	}
-
-	if (wad_base)
-		Z_Free(wad_base);
-
-	wad_base = NULL;
-
-	if (svs.clients)
-		Z_Free(svs.clients);
-
-	svs.clients = NULL;
 
 	Cmd_RemoveAllCommands();
 }

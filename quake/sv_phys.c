@@ -456,6 +456,7 @@ void SV_PushMove (edict_t *pusher, float movetime)
    int         num_moved;
    edict_t     **moved_edict; //johnfitz -- dynamically allocate
    vec3_t      *moved_from; //johnfitz -- dynamically allocate
+   int         mark; //johnfitz
 
    if (!pusher->v.velocity[0] && !pusher->v.velocity[1] && !pusher->v.velocity[2])
    {
@@ -479,8 +480,9 @@ void SV_PushMove (edict_t *pusher, float movetime)
    SV_LinkEdict (pusher, false);
 
    //johnfitz -- dynamically allocate
-   moved_edict = Z_Malloc (sv.num_edicts*sizeof(edict_t *));
-   moved_from = Z_Malloc (sv.num_edicts*sizeof(vec3_t));
+   mark = Hunk_LowMark ();
+   moved_edict = Hunk_Alloc (sv.num_edicts*sizeof(edict_t *));
+   moved_from = Hunk_Alloc (sv.num_edicts*sizeof(vec3_t));
    //johnfitz
 
 // see if any solid entities are inside the final position
@@ -561,13 +563,13 @@ void SV_PushMove (edict_t *pusher, float movetime)
             VectorCopy (moved_from[i], moved_edict[i]->v.origin);
             SV_LinkEdict (moved_edict[i], false);
          }
-		 Z_Free(moved_from);
-         Z_Free(moved_edict);
+         Hunk_FreeToLowMark (mark); //johnfitz
          return;
       }  
    }
-	Z_Free(moved_from);
-	Z_Free(moved_edict);
+
+   Hunk_FreeToLowMark (mark); //johnfitz
+
 }
 
 /*

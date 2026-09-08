@@ -62,7 +62,8 @@ void R_InitParticles (void)
 		r_numparticles = MAX_PARTICLES;
 	}
 
-	particles = Z_Malloc(r_numparticles * sizeof(particle_t));
+	particles = (particle_t *)
+			Hunk_AllocName (r_numparticles * sizeof(particle_t), "particles");
 }
 
 #ifdef QUAKE1
@@ -844,11 +845,4 @@ void R_DrawParticles (void)
 #else
 	D_EndParticles ();
 #endif
-}
-
-void R_ShutdownParticles (void)
-{
-	R_ClearParticles();
-	Z_Free(particles);
-	r_numparticles = 0;
 }

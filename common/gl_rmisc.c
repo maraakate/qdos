@@ -33,7 +33,7 @@ void	R_InitTextures (void)
 	byte	*dest;
 
 // create a simple checkerboard texture for the default
-	r_notexture_mip = Z_Malloc (sizeof(texture_t) + 16*16+8*8+4*4+2*2);
+	r_notexture_mip = Hunk_AllocName (sizeof(texture_t) + 16*16+8*8+4*4+2*2, "notexture");
 	
 	r_notexture_mip->width = r_notexture_mip->height = 16;
 	r_notexture_mip->offsets[0] = sizeof(texture_t);
@@ -312,7 +312,7 @@ void R_TranslatePlayerSkin (int playernum)
 	if (model->type != mod_alias)
 		return; // only translate skins on alias models
 
-	paliashdr = (aliashdr_t *)model->extradata;
+	paliashdr = (aliashdr_t *)Mod_Extradata (model);
 	s = paliashdr->skinwidth * paliashdr->skinheight;
 	if (currententity->skinnum < 0 || currententity->skinnum >= paliashdr->numskins) {
 		Com_Printf("(%d): Invalid player skin #%d\n", playernum, currententity->skinnum);
@@ -633,7 +633,5 @@ void R_Shutdown (void)
 
 	R_ShutdownParticles();
 	Skin_FreeAll();
-	Mod_FreeAll();
 	GL_ShutdownTexures();
-	Z_Free(r_notexture_mip);
 }

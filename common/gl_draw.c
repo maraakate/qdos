@@ -262,7 +262,7 @@ qpic_t	*Draw_CachePic (char *path)
 //
 // load the pic from disk
 //
-	dat = (qpic_t *)COM_LoadFile (path);
+	dat = (qpic_t *)COM_LoadTempFile (path);	
 	if (!dat)
 	{
 		Sys_Error ("Draw_CachePic: failed to load %s", path);
@@ -405,6 +405,7 @@ void Draw_Init (void)
 #endif
 	char	ver[40];
 	glpic_t	*gl;
+	int start;
 	byte    *ncdata;
 	GLint value = 0;
 
@@ -434,7 +435,13 @@ void Draw_Init (void)
 //	Draw_CrosshairAdjust();
 	cs_texture = GL_LoadTexture ("crosshair", 8, 8, cs_data, false, true);
 
-	cb = (qpic_t *)COM_LoadFile ("gfx/conback.lmp");
+	start = Hunk_LowMark();
+
+#ifdef QUAKE1
+	cb = (qpic_t *)COM_LoadTempFile ("gfx/conback.lmp");
+#else
+	cb = (qpic_t *)COM_LoadHunkFile ("gfx/conback.lmp");
+#endif
 	if (!cb)
 	{
 		Sys_Error ("Couldn't load gfx/conback.lmp");
@@ -478,7 +485,7 @@ void Draw_Init (void)
 	conback->height = vid.conheight;
 
 	// free loaded console
-	Z_Free(cb);
+	Hunk_FreeToLowMark (start);
 
 	// save a texture slot for translated picture
 	translate_texture = texture_extension_number++;

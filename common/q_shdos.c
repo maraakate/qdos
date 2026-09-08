@@ -30,51 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-static byte	*membase;
-static size_t	maxhunksize;
-static size_t	curhunksize;
-
-void	*Hunk_Begin (size_t maxsize)
-{
-	/* reserve a huge chunk of memory, but don't commit any yet */
-	maxhunksize = maxsize;
-	curhunksize = 0;
-	membase = (byte *)malloc (maxhunksize);
-	if (!membase)
-		Sys_Error ("VirtualAlloc reserve failed %zd bytes",maxsize);
-
-	memset (membase, 0, maxsize);
-	return (void *)membase;
-}
-
-void	*Hunk_Alloc (size_t size)
-{
-	/* round to cacheline */
-	size = (size+31)&~31;
-
-	curhunksize += size;
-	if (curhunksize > maxhunksize)
-		Sys_Error ("Hunk_Alloc overflow");
-
-	return (void *)(membase+curhunksize-size);
-}
-
-void	Hunk_Free (void *buf)
-{
-	free (buf);
-}
-
-size_t	Hunk_End (void)
-{
-/* for realloc() to be useful here: you either need DJGPP-2.05 or newer,
- * or you need to replace malloc() & friends in any older DJGPP version
- * with nmalloc() as in DJGPP-2.05. */
-	byte *n = (byte *)realloc(membase, curhunksize);
-	if (n != membase)
-		Sys_Error("Hunk_End:  Could not remap virtual block (%d)", errno);
-
-	return curhunksize;
-}
 
 //============================================
 

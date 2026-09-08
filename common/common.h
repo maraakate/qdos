@@ -258,9 +258,18 @@ int COM_FOpenFile (const char *filename, FILE **file);
 int COM_FileExists (const char *filename); /* FS */
 
 void COM_FreeFile (void *buffer);
-byte *COM_LoadFile (const char *path);
+byte *COM_LoadFile (char *path, int usehunk);
 void COM_CreatePath (char *path);
 void COM_Gamedir (char *dir);
+
+void COM_CloseFile (FILE *h);
+
+byte *COM_LoadStackFile (char *path, void *buffer, int bufsize);
+byte *COM_LoadTempFile (char *path);
+byte *COM_LoadHunkFile (char *path);
+void COM_LoadCacheFile (char *path, struct cache_user_s *cu);
+
+void COM_FileBase (char *in, char *out);
 
 /* FS: New stuff */
 int Q_tolower(int c);

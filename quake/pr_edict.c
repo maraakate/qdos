@@ -1059,7 +1059,7 @@ void PR_LoadProgs (void)
 		Z_Free(progs); /* FS: FIXME: Free on disconnect/quit. */
 	}
 
-	progs = (dprograms_t *)COM_LoadFile("progs.dat");
+	progs = (dprograms_t *)COM_LoadHunkFile("progs.dat");
 	if (!progs)
 	{
 		Sys_Error ("PR_LoadProgs: couldn't load progs.dat");

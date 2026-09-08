@@ -108,6 +108,7 @@ modestate_t	modestate = MS_UNINIT;
 
 static byte		*vid_surfcache;
 static int		vid_surfcachesize;
+static int		VID_highhunkmark;
 
 unsigned char	vid_curpal[256*3];
 
@@ -286,11 +287,13 @@ qboolean VID_AllocBuffers (int width, int height)
 	if (d_pzbuffer)
 	{
 		D_FlushCaches ();
-		free(d_pzbuffer);
+		Hunk_FreeToHighMark (VID_highhunkmark);
 		d_pzbuffer = NULL;
 	}
 
-	d_pzbuffer = malloc(tbuffersize);
+	VID_highhunkmark = Hunk_HighMark ();
+
+	d_pzbuffer = Hunk_HighAllocName (tbuffersize, "video");
 
 	vid_surfcache = (byte *)d_pzbuffer +
 			width * height * sizeof (*d_pzbuffer);

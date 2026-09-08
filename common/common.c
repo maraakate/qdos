@@ -882,7 +882,7 @@ void SZ_Alloc (sizebuf_t *buf, int startsize)
 {
 	if (startsize < 256)
 		startsize = 256;
-	buf->data = Z_Malloc (startsize);
+	buf->data = Hunk_AllocName (startsize, "sizebuf");
 	buf->maxsize = startsize;
 	buf->cursize = 0;
 }
@@ -1537,6 +1537,37 @@ static const char *type_extensions[] =
 extern const char *COM_FileExtension (const char *in);
 
 /*
+============
+COM_FileBase
+============
+*/
+void COM_FileBase (char *in, char *out)
+{
+	char *s, *s2;
+
+	if (!*in) {
+		*out = 0;
+		return;
+	}
+	s = in + strlen(in) - 1;
+
+	while (s != in && *s != '.')
+		s--;
+
+	for (s2 = s ; s2 != in && *s2 != '/' ; s2--)
+	 ;
+
+	if (s-s2 < 2)
+		strcpy (out,"?model?");
+	else
+	{
+		s--;
+		strncpy (out,s2+1, s-s2);
+		out[s-s2] = 0;
+	}
+}
+
+/*
 =================
 FS_TypeFlagForPakItem
 Returns bit flag based on pak item's extension.
@@ -1977,53 +2008,133 @@ void FS_Read (void *buffer, int len, FILE *f)
 	}
 }
 
+void COM_FreeFile (void *buffer)
+{
+	if (buffer)
+		Z_Free (buffer);
+}
+
+/*
+===========
+COM_OpenFile
+
+filename never has a leading slash, but may contain directory walks
+returns a handle and a length
+it may actually be inside a pak file
+===========
+*/
+int COM_OpenFile (char *filename, FILE *handle)
+{
+	return COM_FOpenFile (filename, &handle);
+}
+
+/*
+============
+COM_CloseFile
+
+If it is a pak file handle, don't really close it
+============
+*/
+void COM_CloseFile (FILE *h)
+{
+	searchpath_t    *s;
+	
+	for (s = com_searchpaths ; s ; s=s->next)
+		if (s->pack && s->pack->handle == h)
+			return;
+			
+	fclose(h);
+}
+
+
 /*
 ============
 COM_LoadFile
 
 Filename are reletive to the quake directory.
-Allways appends a 0 byte to the loaded data.
+Allways appends a 0 byte.
 ============
 */
-byte	*loadbuf;
-int		loadsize;
-byte *COM_LoadFile (const char *path)
+cache_user_t *loadcache;
+byte    *loadbuf;
+int             loadsize;
+byte *COM_LoadFile (char *path, int usehunk)
 {
-	FILE	*h;
-	byte	*buf;
-	int		len;
+	FILE    *h;
+	byte    *buf;
+	char    base[32];
+	int             len;
 
-	buf = NULL;	// quiet compiler warning
+	buf = NULL;     // quiet compiler warning
 
 // look for it in the filesystem or pack files
-	len = com_filesize = COM_FOpenFile (path, &h);
-	if (!h)
+	len = COM_FOpenFile (path, &h);
+	if (len == -1)
 		return NULL;
-
-	buf = Z_Malloc (len);
-	if (!buf)
+	
+// extract the filename base name for hunk tag
+	COM_FileBase (path, base);
+	
+	if (usehunk == 1)
+		buf = Hunk_AllocName (len+1, base);
+	else if (usehunk == 2)
+		buf = Hunk_TempAlloc (len+1);
+	else if (usehunk == 0)
+		buf = Z_Malloc (len+1);
+	else if (usehunk == 3)
+		buf = Cache_Alloc (loadcache, len+1, base);
+	else if (usehunk == 4)
 	{
-		Sys_Error ("COM_LoadFile: not enough space for %s", path);
-		return NULL;
+		if (len+1 > loadsize)
+			buf = Hunk_TempAlloc (len+1);
+		else
+			buf = loadbuf;
 	}
+	else
+		Sys_Error ("COM_LoadFile: bad usehunk");
+
+	if (!buf)
+		Sys_Error ("COM_LoadFile: not enough space for %s", path);
 		
-	//((byte *)buf)[len] = 0;
-#ifndef SERVERONLY
+
 	Draw_BeginDisc ();
-#endif
-	FS_Read (buf, len, h);
-	fclose (h);
-#ifndef SERVERONLY
+	FS_Read (buf, len, h);                     
+	COM_CloseFile (h);
 	Draw_EndDisc ();
-#endif
+
+	com_filesize = len;
+
+	((byte *)buf)[len] = 0;
 
 	return buf;
 }
 
-void COM_FreeFile (void *buffer)
+byte *COM_LoadHunkFile (char *path)
 {
-	if (buffer)
-		Z_Free (buffer);
+	return COM_LoadFile (path, 1);
+}
+
+byte *COM_LoadTempFile (char *path)
+{
+	return COM_LoadFile (path, 2);
+}
+
+void COM_LoadCacheFile (char *path, struct cache_user_s *cu)
+{
+	loadcache = cu;
+	COM_LoadFile (path, 3);
+}
+
+// uses temp hunk if larger than bufsize
+byte *COM_LoadStackFile (char *path, void *buffer, int bufsize)
+{
+	byte    *buf;
+	
+	loadbuf = (byte *)buffer;
+	loadsize = bufsize;
+	buf = COM_LoadFile (path, 4);
+	
+	return buf;
 }
 
 /*
@@ -2558,7 +2669,7 @@ void COM_InitFilesystem (void) //johnfitz -- modified based on topaz's tutorial
 			if (!com_argv[i] || com_argv[i][0] == '+' || com_argv[i][0] == '-')
 				break;
 			
-			search = Z_Malloc (sizeof(searchpath_t)); /* FS: FIXME: Free this on exit. */
+			search = Hunk_Alloc (sizeof(searchpath_t));
 			if ( !strcmp(COM_FileExtension(com_argv[i]), "pak") )
 			{
 				search->pack = COM_LoadPackFile (com_argv[i]);

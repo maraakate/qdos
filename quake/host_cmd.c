@@ -204,6 +204,9 @@ void Host_Game_f (void)
 			}
 		}
 
+		//clear out and reload appropriate data
+		Cache_Flush ();
+
 		ExtraMaps_NewGame ();
 		//Cbuf_InsertText ("exec quake.rc\n");
 
@@ -802,13 +805,13 @@ void Host_Map_f (void)
 
 	for (i=0 ; i<Cmd_Argc() ; i++)
 	{
-		Q_strlcat (cls.mapstring, Cmd_Argv(i), sizeof(cls.mapstring));
-		Q_strlcat (cls.mapstring, " ", sizeof(cls.mapstring));
+		strcat (cls.mapstring, Cmd_Argv(i));
+		strcat (cls.mapstring, " ");
 	}
-	Q_strlcat (cls.mapstring, "\n", sizeof(cls.mapstring));
+	strcat (cls.mapstring, "\n");
 
 	svs.serverflags = 0;			// haven't completed an episode yet
-	Q_strlcpy (name, Cmd_Argv(1), sizeof(name));
+	strcpy (name, Cmd_Argv(1));
 
 	SV_SpawnServer (name, false);
 
@@ -987,7 +990,7 @@ void Host_SavegameComment (char *text)
 	for (i=0 ; i<SAVEGAME_COMMENT_LENGTH ; i++)
 		text[i] = ' ';
 	memcpy (text, cl.levelname, MIN(strlen(cl.levelname),22)); //johnfitz -- only copy 22 chars.
-	Com_sprintf (kills, sizeof(kills), "kills:%3i/%3i", cl.stats[STAT_MONSTERS], cl.stats[STAT_TOTALMONSTERS]);
+	sprintf (kills,"kills:%3i/%3i", cl.stats[STAT_MONSTERS], cl.stats[STAT_TOTALMONSTERS]);
 	memcpy (text+22, kills, strlen(kills));
 // convert space to _ to make stdio happy
 	for (i=0 ; i<SAVEGAME_COMMENT_LENGTH ; i++)
@@ -1172,11 +1175,9 @@ void Host_Loadgame_f (void)
 
 	for (i=0 ; i<MAX_LIGHTSTYLES ; i++)
 	{
-		size_t len;
 		fscanf (f, "%s\n", str);
-		len = strlen(str) + 1;
-		sv.lightstyles[i] = Z_TagMalloc (len, TAG_LEVEL);
-		Q_strlcpy (sv.lightstyles[i], str, len);
+		sv.lightstyles[i] = Hunk_Alloc (strlen(str)+1);
+		strcpy (sv.lightstyles[i], str);
 	}
 
 // load the edicts out of the savegame file
@@ -2107,7 +2108,7 @@ void PrintFrameName (model_t *m, int frame)
 	aliashdr_t 			*hdr;
 	maliasframedesc_t	*pframedesc;
 
-	hdr = (aliashdr_t *)m->extradata;
+	hdr = (aliashdr_t *)Mod_Extradata (m);
 	if (!hdr)
 		return;
 

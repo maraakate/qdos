@@ -43,7 +43,7 @@ qpic_t		*draw_backtile;
 typedef struct cachepic_s
 {
 	char		name[MAX_QPATH];
-	void		*data;
+	cache_user_t	cache;
 } cachepic_t;
 
 #define	MAX_CACHED_PICS		128
@@ -82,14 +82,17 @@ qpic_t  *Draw_CachePic (char *path)
 		Q_strlcpy (pic->name, path, sizeof(pic->name));
 	}
 
-	dat = pic->data;
+	dat = Cache_Check (&pic->cache);
+
 	if (dat)
 		return dat;
 
 //
 // load the pic from disk
 //
-	dat = (qpic_t *)COM_LoadFile (path);
+	COM_LoadCacheFile (path, &pic->cache);
+	
+	dat = (qpic_t *)pic->cache.data;
 	if (!dat)
 	{
 		Sys_Error ("Draw_CachePic: failed to load %s", path);
@@ -97,7 +100,6 @@ qpic_t  *Draw_CachePic (char *path)
 	}
 
 	SwapPic (dat);
-	pic->data = dat;
 
 	return dat;
 }
