@@ -396,7 +396,7 @@ hSTREAM *S_Open_Stream(const char *path)
 			return NULL;
 		}
 
-		ptr = Z_Malloc(sizeof(hSTREAM));
+		ptr = calloc(1, sizeof(hSTREAM));
 		drwav_get_length_in_pcm_frames(wav, &pcmFrameCount);
 		ptr->totallen = pcmFrameCount;
 		ptr->datarate = wav->sampleRate;
@@ -416,7 +416,7 @@ hSTREAM *S_Open_Stream(const char *path)
 			return NULL;
 		}
 
-		ptr = Z_Malloc(sizeof(hSTREAM));
+		ptr = calloc(1, sizeof(hSTREAM));
 		ptr->datarate = flac->sampleRate;
 		ptr->drflac = flac;
 		ptr->channels = flac->channels;
@@ -441,7 +441,7 @@ hSTREAM *S_Open_Stream(const char *path)
 			return NULL;
 		}
 
-		ptr = Z_Malloc(sizeof(hSTREAM));
+		ptr = calloc(1, sizeof(hSTREAM));
 		drmp3_get_mp3_and_pcm_frame_count(mp3, &mp3FrameCount, &pcmFrameCount);
 		ptr->totallen = pcmFrameCount;
 		ptr->datarate = mp3->sampleRate;
@@ -496,7 +496,7 @@ void S_Destroy_Stream (stream_t *stream)
 		}
 		stream->handle->drflac = NULL;
 
-		Z_Free(stream->handle);
+		free(stream->handle);
 	}
 
 	stream->handle = NULL;

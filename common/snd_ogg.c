@@ -122,7 +122,7 @@ static qboolean S_OpenBackgroundTrack (char *name, bgTrack_t *track)
 		return false;
 	}
 
-	track->vorbisFile = vorbisFile = Z_Malloc(sizeof(OggVorbis_File));
+	track->vorbisFile = vorbisFile = malloc(sizeof(OggVorbis_File));
 
 //	Com_Printf("Opening callbacks for background track\n");
 	if (ov_open_callbacks(track, vorbisFile, NULL, 0, vorbisCallbacks) < 0)
@@ -161,7 +161,7 @@ static void S_CloseBackgroundTrack (bgTrack_t *track)
 	if (track->vorbisFile)
 	{
 		ov_clear(track->vorbisFile);
-		Z_Free(track->vorbisFile);
+		free(track->vorbisFile);
 		track->vorbisFile = NULL;
 	}
 
