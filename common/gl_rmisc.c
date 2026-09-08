@@ -631,7 +631,6 @@ void R_Shutdown (void)
 	Cmd_RemoveCommand ("envmap");	
 	Cmd_RemoveCommand ("pointfile");
 
-	R_ShutdownParticles();
 	Skin_FreeAll();
 	GL_ShutdownTexures();
 }

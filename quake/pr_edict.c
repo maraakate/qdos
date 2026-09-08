@@ -726,7 +726,7 @@ char *ED_NewString (char *string)
 	int		i,l;
 	
 	l = strlen(string) + 1;
-	new = Z_TagMalloc (l, TAG_LEVEL);
+	new = Hunk_Alloc (l);
 	new_p = new;
 
 	for (i=0 ; i< l ; i++)
@@ -1053,11 +1053,6 @@ void PR_LoadProgs (void)
 		gefvCache[i].field[0] = 0;
 
 	CRC_Init (&pr_crc);
-
-	if (progs)
-	{
-		Z_Free(progs); /* FS: FIXME: Free on disconnect/quit. */
-	}
 
 	progs = (dprograms_t *)COM_LoadHunkFile("progs.dat");
 	if (!progs)

@@ -1339,7 +1339,6 @@ CL_PlayBackgroundTrack
 */
 void CL_PlayBackgroundTrack (int track)
 {
-#if 0
 	char	name[MAX_QPATH], *p;
 	int	have_extmusic;
 
@@ -1412,6 +1411,5 @@ void CL_PlayBackgroundTrack (int track)
 	{
 		CDAudio_Play((byte)track, true);
 	}
-#endif
 }
 // end Knightmare

@@ -1381,7 +1381,7 @@ Unfortuantely dr_flac depends on this for a few things so we're just going to di
         #endif
     #else
         #if defined(__GNUC__) || defined(__clang__)
-            static void drflac__cpuid(int info[4], int fid)
+			void drflac__cpuid(int info[4], int fid) /* FS: Shut up GCC3. */
             {
                 /*
                 It looks like the -fPIC option uses the ebx register which GCC complains about. We can work around this by just using a different register, the

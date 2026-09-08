@@ -298,7 +298,7 @@ void S_Shutdown(void)
 		sfx = &known_sfx[i];
 		if (sfx && sfx->cache)
 		{
-			Z_Free(sfx->cache);
+			free(sfx->cache);
 			sfx->cache = NULL;
 		}
 	}
