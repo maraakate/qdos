@@ -355,6 +355,10 @@ int PR_LeaveFunction (void)
 	return pr_stack[pr_depth].s;
 }
 
+#if defined(__GNUC__) && (__GNUC__ >= 4) /* FS: FIXME: GCC4 and up is breaking ftos and friends.  Causing weirdness. */
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+#endif
 
 /*
 ====================
@@ -665,3 +669,7 @@ while (1)
 }
 
 }
+
+#if defined(__GNUC__) && (__GNUC__ >= 4) /* FS: FIXME: GCC4 and up is breaking ftos and friends.  Causing weirdness. */
+#pragma GCC pop_options
+#endif
