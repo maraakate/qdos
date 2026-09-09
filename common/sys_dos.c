@@ -685,6 +685,9 @@ void Sys_GetMemory(void)
 			printf("adjusting requested size to hold zone and locked data.");
 			quakeparms.memsize -= requestedZoneSize;
 			quakeparms.memsize -= lockedMemSize;
+#ifdef GLQUAKE
+			quakeparms.memsize -= 0x1000000; /* FS: FIXME: Need it if you do not want cache thrasing on slow machines.  Not sure where it comes from.  Could blow on CWSDPR0 if you care. */
+#endif
 		}
 	}
 
@@ -713,7 +716,7 @@ void Sys_GetMemory(void)
 
 	printf("malloc'd: %ld\n", quakeparms.memsize);
 
-	if (!COM_CheckParm ("-clearmem")) /* FS: Wanted the option */
+	if (COM_CheckParm("-clearmem")) /* FS: Wanted the option */
 	{
 		printf("Clearing allocated memory...\n");
 		memset(quakeparms.membase,0x0,quakeparms.memsize); // JASON: Clear memory on startup
