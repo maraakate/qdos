@@ -48,7 +48,8 @@ net_driver_t net_drivers[] =
 		Loop_CanSendMessage,
 		Loop_CanSendUnreliableMessage,
 		Loop_Close,
-		Loop_Shutdown
+		Loop_Shutdown,
+		-1
 	},
 
 	{	"Datagram",
@@ -64,7 +65,8 @@ net_driver_t net_drivers[] =
 		Datagram_CanSendMessage,
 		Datagram_CanSendUnreliableMessage,
 		Datagram_Close,
-		Datagram_Shutdown
+		Datagram_Shutdown,
+		-1
 	},
 
 	{	"Serial",
@@ -80,7 +82,8 @@ net_driver_t net_drivers[] =
 		Serial_CanSendMessage,
 		Serial_CanSendUnreliableMessage,
 		Serial_Close,
-		Serial_Shutdown
+		Serial_Shutdown,
+		-1
 	}
 };
 

@@ -196,7 +196,7 @@ VGA_Init
 */
 void VGA_Init (void)
 {
-	int		i;
+	size_t	i;
 
 // link together all the VGA modes
 	for (i=0 ; i<(NUMVIDMODES - 1) ; i++)

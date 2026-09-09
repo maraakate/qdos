@@ -146,7 +146,7 @@ static int net_acceptsocket = -1;
 static int net_controlsocket;
 
 static void IPX_PollProcedure(void);
-static PollProcedure pollProcedure = {NULL, 0.0, IPX_PollProcedure};
+static PollProcedure pollProcedure = { NULL, 0.0, IPX_PollProcedure, NULL };
 
 //=============================================================================
 

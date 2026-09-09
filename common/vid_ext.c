@@ -53,7 +53,7 @@ typedef struct {
 } vesa_extra_t;
 
 static vmode_t		vesa_modes[MAX_VESA_MODES] =
-	{{NULL, NULL, "    ********* VESA modes *********    "}};
+	{{NULL, NULL, "    ********* VESA modes *********    ", 0, 0, 0.0f, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL}};
 static vesa_extra_t	vesa_extra[MAX_VESA_MODES];
 static char			names[MAX_VESA_MODES][10];
 

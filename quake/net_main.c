@@ -50,8 +50,8 @@ static int		slistLastShown;
 
 static void Slist_Send(void);
 static void Slist_Poll(void);
-PollProcedure	slistSendProcedure = {NULL, 0.0, Slist_Send};
-PollProcedure	slistPollProcedure = {NULL, 0.0, Slist_Poll};
+PollProcedure	slistSendProcedure = { NULL, 0.0, Slist_Send, NULL };
+PollProcedure	slistPollProcedure = { NULL, 0.0, Slist_Poll, NULL };
 
 
 sizebuf_t		net_message;

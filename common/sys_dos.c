@@ -650,7 +650,7 @@ static int Sys_Get_Physical_Memory(void) /* FS: From DJGPP tutorial */
 	_go32_dpmi_meminfo meminfo;
 
 	_go32_dpmi_get_free_memory_information(&meminfo);
-	if (meminfo.available_physical_pages != -1)
+	if (meminfo.available_physical_pages != -1) /* FS: FIXME: available_physical_pages is unsigned long so this doesn't do anything? */
 		return meminfo.available_physical_pages * 4096;
 
 	return meminfo.available_memory;
