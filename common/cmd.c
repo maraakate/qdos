@@ -336,7 +336,7 @@ void Cmd_Exec_f (void)
 		}
 	}
 
-	f = (char *)COM_LoadFile(s, 0);
+	f = (char *)COM_LoadFile(s, COM_LOADFILE_ZMALLOC);
 	if (!f)
 	{
 		Com_Printf ("couldn't exec %s\n",s);

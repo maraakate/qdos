@@ -525,21 +525,20 @@ void Sys_AtExit (void)
 	Sys_Shutdown();
 }
 
+#ifndef GLQUAKE
+static byte *sellscreen = NULL;
+#endif
+
 void Sys_Quit (void)
 {
 #ifndef GLQUAKE
 	byte    screen[80 * 25 * 2];
-	byte *d = NULL;
 	char                    ver[6];
 	int                     i;
 
 	// load the sell screen before shutting everything down
-	if (registered->intValue)
-		d = COM_LoadHunkFile ("end2.bin");
-	else
-		d = COM_LoadHunkFile ("end1.bin");
-	if (d)
-		memcpy (screen, d, sizeof(screen));
+	if (sellscreen)
+		memcpy (screen, sellscreen, sizeof(screen));
 
 // write the version number directly to the end screen
 	Com_sprintf (ver, sizeof(ver), " v%4.2f", VERSION);
@@ -551,7 +550,7 @@ void Sys_Quit (void)
 
 #ifndef GLQUAKE
 // do the text mode sell screen
-	if (d)
+	if (sellscreen)
 	{
 		memcpy ((void *)real2ptr(0xb8000), screen,80*25*2); 
 	
@@ -815,6 +814,14 @@ int main (int c, char **v)
 	Sys_Init ();
 
 	Host_Init(&quakeparms);
+
+#ifndef GLQUAKE
+	/* FS: Load sellscreen now in case something fucks up later. */
+	if (registered && registered->intValue)
+		sellscreen = COM_LoadFile("end2.bin", COM_LOADFILE_CALLOC);
+	else
+		sellscreen = COM_LoadFile("end1.bin", COM_LOADFILE_CALLOC);
+#endif
 
 	oldtime = Sys_DoubleTime();
 

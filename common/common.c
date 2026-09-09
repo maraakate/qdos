@@ -2055,9 +2055,11 @@ Filename are reletive to the quake directory.
 Allways appends a 0 byte.
 ============
 */
+
 cache_user_t *loadcache;
 byte    *loadbuf;
 int             loadsize;
+
 byte *COM_LoadFile (char *path, int usehunk)
 {
 	FILE    *h;
@@ -2075,54 +2077,66 @@ byte *COM_LoadFile (char *path, int usehunk)
 // extract the filename base name for hunk tag
 	COM_FileBase (path, base);
 	
-	if (usehunk == 1)
-		buf = Hunk_AllocName (len+1, base);
-	else if (usehunk == 2)
-		buf = Hunk_TempAlloc (len+1);
-	else if (usehunk == 0)
-		buf = Z_Malloc (len+1);
-	else if (usehunk == 3)
-		buf = Cache_Alloc (loadcache, len+1, base);
-	else if (usehunk == 4)
+	switch (usehunk)
 	{
-		if (len+1 > loadsize)
-			buf = Hunk_TempAlloc (len+1);
-		else
-			buf = loadbuf;
+		case COM_LOADFILE_ZMALLOC:
+			buf = Z_Malloc (len + 1);
+			break;
+		case COM_LOADFILE_HUNKALLOCNAME:
+			buf = Hunk_AllocName (len + 1, base);
+			break;
+		case COM_LOADFILE_TEMPALLOC:
+			buf = Hunk_TempAlloc (len + 1);
+			break;
+		case COM_LOADFILE_CACHEALLOC:
+			buf = Cache_Alloc (loadcache, len + 1, base);
+			break;
+		case COM_LOADFILE_STACKFILE:
+			if (len + 1 > loadsize)
+				buf = Hunk_TempAlloc (len + 1);
+			else
+				buf = loadbuf;
+			break;
+		case COM_LOADFILE_CALLOC:
+			buf = calloc(1, len + 1);
+			break;
+		default:
+			Sys_Error ("COM_LoadFile: bad usehunk %d", usehunk);
+			return NULL;
 	}
-	else
-		Sys_Error ("COM_LoadFile: bad usehunk");
 
 	if (!buf)
+	{
 		Sys_Error ("COM_LoadFile: not enough space for %s", path);
-		
+		return NULL;
+	}
 
 	Draw_BeginDisc ();
-	FS_Read (buf, len, h);                     
+	FS_Read (buf, len, h);
 	COM_CloseFile (h);
 	Draw_EndDisc ();
 
 	com_filesize = len;
 
-	((byte *)buf)[len] = 0;
+	buf[len] = 0;
 
 	return buf;
 }
 
 byte *COM_LoadHunkFile (char *path)
 {
-	return COM_LoadFile (path, 1);
+	return COM_LoadFile (path, COM_LOADFILE_HUNKALLOCNAME);
 }
 
 byte *COM_LoadTempFile (char *path)
 {
-	return COM_LoadFile (path, 2);
+	return COM_LoadFile (path, COM_LOADFILE_TEMPALLOC);
 }
 
 void COM_LoadCacheFile (char *path, struct cache_user_s *cu)
 {
 	loadcache = cu;
-	COM_LoadFile (path, 3);
+	COM_LoadFile (path, COM_LOADFILE_CACHEALLOC);
 }
 
 // uses temp hunk if larger than bufsize
@@ -2132,7 +2146,7 @@ byte *COM_LoadStackFile (char *path, void *buffer, int bufsize)
 	
 	loadbuf = (byte *)buffer;
 	loadsize = bufsize;
-	buf = COM_LoadFile (path, 4);
+	buf = COM_LoadFile (path, COM_LOADFILE_STACKFILE);
 	
 	return buf;
 }

@@ -253,6 +253,16 @@ struct cache_user_s;
 
 extern	char	com_gamedir[MAX_OSPATH];
 
+typedef enum
+{
+	COM_LOADFILE_ZMALLOC = 0,
+	COM_LOADFILE_HUNKALLOCNAME = 1,
+	COM_LOADFILE_TEMPALLOC = 2,
+	COM_LOADFILE_CACHEALLOC = 3,
+	COM_LOADFILE_STACKFILE = 4,
+	COM_LOADFILE_CALLOC = 5,
+} loadfiletype_t;
+
 void COM_WriteFile (const char *filename, void *data, int len);
 int COM_FOpenFile (const char *filename, FILE **file);
 int COM_FileExists (const char *filename); /* FS */
