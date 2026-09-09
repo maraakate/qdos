@@ -397,6 +397,11 @@ hSTREAM *S_Open_Stream(const char *path)
 		}
 
 		ptr = calloc(1, sizeof(hSTREAM));
+		if (!ptr)
+		{
+			Sys_Error("S_Open_Stream: out of memory");
+			return NULL;
+		}
 		drwav_get_length_in_pcm_frames(wav, &pcmFrameCount);
 		ptr->totallen = pcmFrameCount;
 		ptr->datarate = wav->sampleRate;
@@ -417,6 +422,11 @@ hSTREAM *S_Open_Stream(const char *path)
 		}
 
 		ptr = calloc(1, sizeof(hSTREAM));
+		if (!ptr)
+		{
+			Sys_Error("S_Open_Stream: out of memory");
+			return NULL;
+		}
 		ptr->datarate = flac->sampleRate;
 		ptr->drflac = flac;
 		ptr->channels = flac->channels;
@@ -442,6 +452,11 @@ hSTREAM *S_Open_Stream(const char *path)
 		}
 
 		ptr = calloc(1, sizeof(hSTREAM));
+		if (!ptr)
+		{
+			Sys_Error("S_Open_Stream: out of memory");
+			return NULL;
+		}
 		drmp3_get_mp3_and_pcm_frame_count(mp3, &mp3FrameCount, &pcmFrameCount);
 		ptr->totallen = pcmFrameCount;
 		ptr->datarate = mp3->sampleRate;
