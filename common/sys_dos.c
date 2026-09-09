@@ -107,6 +107,7 @@ static __dpmi_meminfo	info; /* FS: Sigh, moved this here because everyone wants 
 /* FS: Stuff for /memstats */
 static int physicalMemStart;
 static unsigned long virtualMemStart;
+static size_t lockedMemSize;
 
 void MaskExceptions (void);
 void Sys_PushFPCW_SetHigh (void);
@@ -619,25 +620,100 @@ Sys_GetMemory
 */
 void Sys_GetMemory(void)
 {
-	int j;
+	int hasMemSize, hasHeapSize, hasZoneSize, tmp;
+	size_t currentMemSize;
+	size_t requestedZoneSize;
 
-	quakeparms.memsize = 0x2000000;
+	currentMemSize = quakeparms.memsize;
+	requestedZoneSize = Memory_GetZoneSize(); /* FS: A fib, just get the default zone size for now. */
+
+	quakeparms.memsize = 0x2000000; /* 32 MB */
 #ifdef QUAKE1
 	if (extended_mod)  /* FS: For big boy mods */
-		quakeparms.memsize = 0x4000000;
+		quakeparms.memsize = 0x4000000; /* 64 MB */
 #endif
 
-	if ((j = COM_CheckParm("-mem")) != 0 && j < com_argc-1)
-		quakeparms.memsize = atoi(com_argv[j+1]) * 1024 * 1024;
+	if ((hasMemSize = COM_CheckParm("-mem")) != 0 && hasMemSize < com_argc - 1)
+	{
+		tmp = atoi(com_argv[hasMemSize + 1]);
+		if (tmp <= 0)
+		{
+			printf("you must request a size > 0 for -mem!");
+			exit(-1);
+			return;
+		}
+		quakeparms.memsize = tmp * 1024 * 1024;
+	}
 
-	if ((j = COM_CheckParm ("-heapsize")) != 0 && j < com_argc-1)
-		quakeparms.memsize = atoi(com_argv[j+1]) * 1024;
+	if ((hasHeapSize = COM_CheckParm ("-heapsize")) != 0 && hasHeapSize < com_argc - 1)
+	{
+		tmp = atoi(com_argv[hasHeapSize + 1]);
+		if (tmp <= 0)
+		{
+			printf("you must request a size > 0 for -heapsize!");
+			exit(-1);
+			return;
+		}
+		quakeparms.memsize = tmp * 1024;
+	}
+
+	if ((hasZoneSize = COM_CheckParm ("-zone")) != 0 && hasZoneSize < com_argc - 1)
+	{
+		tmp = atoi(com_argv[hasZoneSize + 1]);
+		if (tmp <= 0)
+		{
+			printf("you must request a size > 0 for -zone!");
+			exit(-1);
+			return;
+		}
+		requestedZoneSize = tmp * 1024;
+	}
+
+	tmp = COM_CheckParm("-nosmartmem");
+
+	if (hasMemSize || hasHeapSize)
+	{
+		if (quakeparms.memsize > currentMemSize)
+		{
+			printf("you can't allocate more ram than available!");
+			exit(-1);
+			return;
+		}
+
+		if (!tmp && (quakeparms.memsize + requestedZoneSize + lockedMemSize > currentMemSize))
+		{
+			printf("adjusting requested size to hold zone and locked data.");
+			quakeparms.memsize -= requestedZoneSize;
+			quakeparms.memsize -= lockedMemSize;
+		}
+	}
+
+	if (!tmp && !hasMemSize && !hasHeapSize)// && currentMemSize > quakeparms.memsize)
+	{
+		quakeparms.memsize = currentMemSize - lockedMemSize - requestedZoneSize;
+		printf("allocating all available memory %4.1f MB\n", quakeparms.memsize / (1024.0 * 1024.0));
+	}
+
+	tmp = COM_CheckParm("-nomemcheck");
+	if (!tmp && quakeparms.memsize < 0x1000000)
+	{
+		printf("QDOS requires at least 16MB of available RAM (not including locked and zone data) to run.");
+		exit(-1);
+		return;
+	}
+
+	if (!tmp && extended_mod && quakeparms.memsize < 0x4000000)
+	{
+		printf("QDOS requires at least 64MB of available RAM (not including locked and zone data) to run large mods.");
+		exit(-1);
+		return;
+	}
 
 	quakeparms.membase = malloc (quakeparms.memsize);
 
 	printf("malloc'd: %ld\n", quakeparms.memsize);
 
-	if (!COM_CheckParm ("-noclear")) /* FS: Wanted the option */
+	if (!COM_CheckParm ("-clearmem")) /* FS: Wanted the option */
 	{
 		printf("Clearing allocated memory...\n");
 		memset(quakeparms.membase,0x0,quakeparms.memsize); // JASON: Clear memory on startup
@@ -645,12 +721,12 @@ void Sys_GetMemory(void)
 	}
 }
 
-static int Sys_Get_Physical_Memory(void) /* FS: From DJGPP tutorial */
+static size_t Sys_Get_Physical_Memory(void) /* FS: From DJGPP tutorial */
 {
 	_go32_dpmi_meminfo meminfo;
 
 	_go32_dpmi_get_free_memory_information(&meminfo);
-	if (meminfo.available_physical_pages != -1) /* FS: FIXME: available_physical_pages is unsigned long so this doesn't do anything? */
+	if (meminfo.available_physical_pages != (unsigned long)-1)
 		return meminfo.available_physical_pages * 4096;
 
 	return meminfo.available_memory;
@@ -695,6 +771,8 @@ static void Sys_PageInProgram(void)
 				(end_of_memory - (int)&start_of_memory) / 0x100000);
 	}
 
+	lockedMemSize = end_of_memory - (int)&start_of_memory;
+
 // touch the entire image, doing the 16-page skip so Win95 doesn't think we're
 // trying to page ourselves in
 	for (j=0 ; j<4 ; j++)
@@ -721,6 +799,7 @@ void Sys_Memory_Stats_f (void)
 {
 	Com_Printf("%d Mb available for QDOS.  Started with %d.\n", (Sys_Get_Physical_Memory() / 0x100000), physicalMemStart);
 	Com_Printf("%lu Virtual Mb available for QDOS. Started with %lu.\n", (_go32_dpmi_remaining_virtual_memory() / 0x100000), virtualMemStart);
+	Com_Printf("%d Mb allocated for zone.\n", Memory_GetZoneSize() / 1024 / 1024);
 }
 
 static void Sys_ParseEarlyArgs(int argc, char **argv) /* FS: Parse some very specific args before Qcommon_Init */
