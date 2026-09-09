@@ -1108,7 +1108,8 @@ void Host_Loadgame_f (void)
 	char	mapname[MAX_QPATH];
 	float	time, tfloat;
 	char	str[32768], *start;
-	int		i, r;
+	size_t	i;
+	int		r;
 	edict_t	*ent;
 	int		entnum;
 	int		version;
@@ -1305,6 +1306,7 @@ void Host_Say(qboolean teamonly)
 {
 	client_t *client;
 	client_t *save;
+	size_t	i;
 	int		j;
 	char	*p;
 	char	text[64];
@@ -1343,9 +1345,9 @@ void Host_Say(qboolean teamonly)
 	else
 		Com_sprintf (text, sizeof(text), "%c<%s> ", 1, hostname->string);
 
-	j = sizeof(text) - 2 - Q_strlen(text);  // -2 for /n and null terminator
-	if (Q_strlen(p) > j)
-		p[j] = 0;
+	i = sizeof(text) - 2 - Q_strlen(text);  // -2 for /n and null terminator
+	if (Q_strlen(p) > i)
+		p[i] = 0;
 
 	Q_strlcat (text, p, sizeof(text));
 	Q_strlcat (text, "\n", sizeof(text));
@@ -1381,6 +1383,7 @@ void Host_Tell_f(void)
 {
 	client_t *client;
 	client_t *save;
+	size_t	i;
 	int		j;
 	char	*p;
 	char	text[64];
@@ -1407,9 +1410,9 @@ void Host_Tell_f(void)
 	}
 
 // check length & truncate if necessary
-	j = sizeof(text) - 2 - Q_strlen(text);  // -2 for /n and null terminator
-	if (Q_strlen(p) > j)
-		p[j] = 0;
+	i = sizeof(text) - 2 - Q_strlen(text);  // -2 for /n and null terminator
+	if (Q_strlen(p) > i)
+		p[i] = 0;
 
 	Q_strlcat (text, p, sizeof(text));
 	Q_strlcat (text, "\n", sizeof(text));

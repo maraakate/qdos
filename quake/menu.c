@@ -1583,7 +1583,7 @@ void M_UnbindCommand (char *command)
 
 void M_Keys_Draw (void)
 {
-	int	     i; //, l;
+	size_t   i; //, l;
 	int	     keys[2];
 	char    *name;
 	int	     x, y;

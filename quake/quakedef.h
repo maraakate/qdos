@@ -361,7 +361,7 @@ extern int	current_skill;          // skill level for currently loaded level (in
 
 extern qboolean	sDedicated;
 
-extern int	minimum_memory;
+extern size_t	minimum_memory;
 
 //
 // chase

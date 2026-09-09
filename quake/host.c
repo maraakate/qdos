@@ -48,7 +48,7 @@ int			fps_count; /* FS: for show_fps */
 
 int			host_hunklevel;
 
-int			minimum_memory;
+size_t		minimum_memory;
 
 client_t *host_client;		  // current client
 

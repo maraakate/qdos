@@ -43,7 +43,7 @@ char *strtok_r(char *s, const char *delim, char **last);
 
 /* from Quake3 */
 #ifdef _WIN32
-__inline int Q_vsnprintf (char *Dest, size_t Count, const char *Format, va_list Args)
+__inline int Q_vsnprintf (char *Dest, int Count, const char *Format, va_list Args)
 {
 	int ret = _vsnprintf(Dest, Count, Format, Args);
 	Dest[Count - 1] = 0;	// null terminate
@@ -268,7 +268,7 @@ int COM_FOpenFile (const char *filename, FILE **file);
 int COM_FileExists (const char *filename); /* FS */
 
 void COM_FreeFile (void *buffer);
-byte *COM_LoadFile (char *path, int usehunk);
+byte *COM_LoadFile (char *path, loadfiletype_t usehunk);
 void COM_CreatePath (char *path);
 void COM_Gamedir (char *dir);
 
@@ -310,7 +310,7 @@ byte    COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 
 int build_number( void );
 void CompleteCommand (void); /* FS: Autocomplete commands */
-void Com_sprintf (char *dest, size_t size, char *fmt, ...); /* FS: Added */
+void Com_sprintf (char *dest, int size, char *fmt, ...); /* FS: Added */
 const char *COM_FileExtension (const char *in);
 
 #endif // __COMMON_H

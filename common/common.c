@@ -748,7 +748,8 @@ float MSG_ReadFloat (void)
 char *MSG_ReadString (void)
 {
 	static char     string[2048];
-	int             l,c;
+	size_t	l;
+	int		c;
 	
 	l = 0;
 	do
@@ -768,7 +769,8 @@ char *MSG_ReadString (void)
 char *MSG_ReadStringLine (void)
 {
 	static char	string[2048];
-	int		l,c;
+	size_t	l;
+	int		c;
 	
 	l = 0;
 	do
@@ -1791,7 +1793,7 @@ needed.  This is for the convenience of developers using ISDN from home.
 void COM_CopyFile (char *netpath, char *cachepath)
 {
 	FILE	*in, *out;
-	int		remaining, count;
+	size_t	remaining, count;
 	char	buf[4096];
 	
 	remaining = COM_FileOpenRead (netpath, &in);		
@@ -2060,7 +2062,7 @@ cache_user_t *loadcache;
 byte    *loadbuf;
 int             loadsize;
 
-byte *COM_LoadFile (char *path, int usehunk)
+byte *COM_LoadFile (char *path, loadfiletype_t usehunk)
 {
 	FILE    *h;
 	byte    *buf;
@@ -3196,7 +3198,7 @@ cont:
 #endif
 
 /* FS: Buffer safe sprintf so we aren't va'ing all over the place */
-void Com_sprintf (char *dest, size_t size, char *fmt, ...)
+void Com_sprintf (char *dest, int size, char *fmt, ...)
 {
 	int		len;
 	va_list		argptr;

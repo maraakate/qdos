@@ -572,7 +572,7 @@ static GError ServerListQueryLoop(GServerList serverlist)
 	char indata[GS_MSGLEN];
 	struct sockaddr_in saddr;
 	int saddrlen = sizeof(saddr);
-	int server_timeout = bound(100, cl_master_server_timeout->intValue, 9000); /* FS: Now a CVAR */
+	unsigned long server_timeout = bound(100, cl_master_server_timeout->intValue, 9000); /* FS: Now a CVAR */
 	int scount = 0;
 	static qboolean firsttime = true;
 	GServer server;
