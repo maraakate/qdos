@@ -296,10 +296,10 @@ void S_Shutdown(void)
 	for (i = 0; i < num_sfx; i++)
 	{
 		sfx = &known_sfx[i];
-		if (sfx && sfx->cache)
+		if (sfx && sfx->cache.data)
 		{
-			free(sfx->cache);
-			sfx->cache = NULL;
+			Cache_Free(&sfx->cache);
+			sfx->cache.data = NULL;
 		}
 	}
 
@@ -1045,7 +1045,7 @@ void S_SoundList(void)
 	total = 0;
 	for (sfx=known_sfx, i=0 ; i<num_sfx ; i++, sfx++)
 	{
-		sc = (sfxcache_t *)sfx->cache;
+		sc = Cache_Check(&sfx->cache);
 		if (!sc)
 			continue;
 		size = sc->length*sc->width*(sc->stereo+1);

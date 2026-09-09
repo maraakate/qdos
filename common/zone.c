@@ -1062,6 +1062,7 @@ void *Cache_Alloc (cache_user_t *c, int size, char *name)
 
 //============================================================================
 
+static int zonesize = DYNAMIC_SIZE;
 
 /*
 ========================
@@ -1071,7 +1072,6 @@ Memory_Init
 void Memory_Init (void *buf, int size)
 {
 	int p;
-	int zonesize = DYNAMIC_SIZE;
 
 	if (!buf || size <= 0)
 	{
@@ -1091,6 +1091,11 @@ void Memory_Init (void *buf, int size)
 		if (p < com_argc - 1)
 		{
 			zonesize = atoi (com_argv[p + 1]) * 1024;
+			if (zonesize <= 0)
+			{
+				Sys_Error("Memory_Init: you must specify a size > 0!");
+				return;
+			}
 		}
 		else
 		{
@@ -1103,4 +1108,9 @@ void Memory_Init (void *buf, int size)
 	Z_ClearZone (mainzone, zonesize);
 
 	Cmd_AddCommand ("hunk_print", Hunk_Print_f); //johnfitz
+}
+
+int Memory_GetZoneSize (void) /* FS */
+{
+	return zonesize;
 }
