@@ -1599,6 +1599,7 @@ Com_HashFileName
 long Com_HashFileName (const char *fname, int hashSize, qboolean sized)
 {
 	int		i = 0;
+	int		count = 0;
 	long	hash = 0;
 	char	letter;
 
@@ -1607,8 +1608,21 @@ long Com_HashFileName (const char *fname, int hashSize, qboolean sized)
 	{
 		letter = tolower(fname[i]);
 		//	if (letter == '.') break;
-		if (letter == '\\') letter = '/';	// fix filepaths
-		hash += (long)(letter) * (i + 119);
+		if (letter == '\\')
+			letter = '/';	// fix filepaths
+
+		/* FS: Sounds with extra slashes will fail this test and not load them.  We have to fix it here... */
+		if (i > 0 && fname[i - 1] == '/')
+		{
+			if (letter == '/')
+			{
+				i++;
+				continue;
+			}
+		}
+
+		hash += (long)(letter) * (count + 119);
+		count++;
 		i++;
 	}
 	hash = (hash ^ (hash >> 10) ^ (hash >> 20));
