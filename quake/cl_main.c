@@ -760,6 +760,8 @@ void CL_Snd_Restart_f (void)
 	S_Shutdown();
 	S_Init();
 
+	CL_InitTEnts();
+
 	if (cl.numsounds)
 	{
 		for (i = 1; i < cl.numsounds; i++) /* FS: First one is always blank, so skip it. */
