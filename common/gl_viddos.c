@@ -629,6 +629,7 @@ void VID_Shutdown(void)
 	R_Shutdown();
 	if (DOSGL_Shutdown)
 		DOSGL_Shutdown ();
+	DOSGL_Shutdown = NULL; /* FS: In case we crash we don't want to execute this twice in case of a buggy driver. */
 #ifdef GL_DLSYM
 	GL_CloseLibrary();
 #endif

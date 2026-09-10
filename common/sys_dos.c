@@ -423,6 +423,10 @@ void Sys_Init(void)
 	Sys_InitDXE3();
 }
 
+#ifdef GLQUAKE
+extern void (*DOSGL_Shutdown) (void);
+#endif
+
 void Sys_Shutdown(void)
 {
 	if (!dedicated || !dedicated->value)
@@ -434,6 +438,19 @@ void Sys_Shutdown(void)
 					   end_of_memory - (int)&start_of_memory);
 		dos_unlockmem (quakeparms.membase, quakeparms.memsize);
 	}
+
+	/* FS: Desperate attempt to fix the mode if we bomb in OpenGL. */
+#ifdef GLQUAKE
+	if (DOSGL_Shutdown)
+		DOSGL_Shutdown();
+
+	regs.h.ah = 0;
+	regs.h.al = 0x3;
+	dos_int86(0x10);
+#endif
+
+	__dpmi_free_physical_address_mapping(&info);
+	__djgpp_nearptr_disable(); /* FS: Everyone else is a master DOS DPMI programmer.  Pretty sure CWSDPMI is already taking care of this... */
 }
 
 // Knightmare- added this to fix CPU usage
@@ -567,9 +584,6 @@ void Sys_Quit (void)
 		printf ("couldn't load endscreen.\n");
 	}
 #endif
-
-	__dpmi_free_physical_address_mapping(&info);
-	__djgpp_nearptr_disable(); /* FS: Everyone else is a master DOS DPMI programmer.  Pretty sure CWSDPMI is already taking care of this... */
 
 	exit(0);
 }
@@ -816,6 +830,8 @@ static void Sys_ParseEarlyArgs(int argc, char **argv) /* FS: Parse some very spe
 			skipwincheck = true;
 		if(stricmp(argv[i],"-skiplfncheck") == 0)
 			skiplfncheck = true;
+		if (stricmp(argv[i], "-novirtualmem") == 0)
+			_crt0_startup_flags |= _CRT0_FLAG_LOCK_MEMORY;
 	}
 }
 
