@@ -60,7 +60,7 @@ static int	keybuf_head = 0;
 static int	keybuf_tail = 0;
 
 static quakeparms_t	quakeparms;
-static int	minmem;
+//static int	minmem;
 
 float			fptest_temp;
 
@@ -171,7 +171,7 @@ static void Sys_DetectWin95 (void)
 	}
 }
 
-
+#if 0 /* FS: Unused.  Not sure if really necessary anymore. */
 void *dos_getmaxlockedmem(int *size)
 {
 	__dpmi_free_mem_info	meminfo;
@@ -346,7 +346,7 @@ UpdateSbrk:
 	*size = working_size;
 	return working_memory;
 }
-
+#endif
 
 /*
 ============
@@ -624,6 +624,10 @@ void Sys_GetMemory(void)
 	size_t currentMemSize;
 	size_t requestedZoneSize;
 
+#ifdef GLQUAKE
+	lockedMemSize -= 16 * 0x100000; /* FS: Reserve 16MB for OpenGL driver. */
+#endif
+
 	currentMemSize = quakeparms.memsize;
 	requestedZoneSize = Memory_GetZoneSize(); /* FS: A fib, just get the default zone size for now. */
 
@@ -685,9 +689,6 @@ void Sys_GetMemory(void)
 			printf("adjusting requested size to hold zone and locked data.");
 			quakeparms.memsize -= requestedZoneSize;
 			quakeparms.memsize -= lockedMemSize;
-#ifdef GLQUAKE
-			quakeparms.memsize -= 0x1000000; /* FS: FIXME: Need it if you do not want cache thrasing on slow machines.  Not sure where it comes from.  Could blow on CWSDPR0 if you care. */
-#endif
 		}
 	}
 
@@ -802,7 +803,8 @@ void Sys_Memory_Stats_f (void)
 {
 	Com_Printf("%d Mb available for QDOS.  Started with %d.\n", (Sys_Get_Physical_Memory() / 0x100000), physicalMemStart);
 	Com_Printf("%lu Virtual Mb available for QDOS. Started with %lu.\n", (_go32_dpmi_remaining_virtual_memory() / 0x100000), virtualMemStart);
-	Com_Printf("%d Mb allocated for zone.\n", Memory_GetZoneSize() / 1024 / 1024);
+	Com_Printf("%4.1f Mb allocated for zone.\n", Memory_GetZoneSize() / (1024.0 * 1024.0));
+	Com_Printf("%4.1f Mb allocated for hunk.\n", quakeparms.memsize / (1024.0 * 1024.0));
 }
 
 static void Sys_ParseEarlyArgs(int argc, char **argv) /* FS: Parse some very specific args before Qcommon_Init */

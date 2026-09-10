@@ -260,14 +260,12 @@ void ExtraMaps_Add (char *name)
     }
 }
 
-void ExtraMaps_Init (void) //TODO: move win32 specific stuff to sys_win.c
+void ExtraMaps_Init (void)
 {
-#ifdef _WIN32
-	WIN32_FIND_DATA	FindFileData;
-	HANDLE			Find;
 	char			filestring[MAX_OSPATH];
-	char			mapname[32];
-	char			ignorepakdir[32];
+	char			mapname[MAX_OSPATH];
+	char			ignorepakdir[MAX_OSPATH];
+	char			*s;
 	searchpath_t    *search;
 	pack_t          *pak;
 	int             i;
@@ -280,28 +278,37 @@ void ExtraMaps_Init (void) //TODO: move win32 specific stuff to sys_win.c
 		if (*search->filename) //directory
 		{
 			Com_sprintf (filestring, sizeof(filestring), "%s/maps/*.bsp", search->filename);
-			Find = FindFirstFile(filestring, &FindFileData);
-			if (Find == INVALID_HANDLE_VALUE)
+			s = Sys_FindFirst(filestring, 0, 0);
+			if (!s)
+			{
+				Sys_FindClose();
 				continue;
+			}
 			do
 			{
-				COM_StripExtension(FindFileData.cFileName, mapname);
+				COM_StripExtension(s, mapname);
 				ExtraMaps_Add (mapname);
-			} while (FindNextFile(Find, &FindFileData));
+			} while ((s = Sys_FindNext(0, 0)));
+			Sys_FindClose();
 		}
 		else //pakfile
 		{
 			if (!strstr(search->pack->filename, ignorepakdir)) //don't list standard id maps
-				for (i=0, pak=search->pack; i<pak->numfiles ; i++)
-					if (strstr(pak->files[i].name, ".bsp"))
-						if (pak->files[i].filelen > 32*1024) // don't list files under 32k (ammo boxes etc)
+			{
+				for (i = 0, pak = search->pack; i < pak->numfiles; i++)
+				{
+					if (!strcmp(COM_FileExtension(pak->files[i].name), ".bsp"))
+					{
+						if (pak->files[i].filelen > 32 * 1024) // don't list files under 32k (ammo boxes etc)
 						{
 							COM_StripExtension(pak->files[i].name + 5, mapname);
 							ExtraMaps_Add (mapname);
 						}
+					}
+				}
+			}
 		}
 	}
-#endif
 }
 
 void ExtraMaps_Clear (void)
@@ -1292,7 +1299,6 @@ void Host_Name_f (void)
 	MSG_WriteString (&sv.reliable_datagram, host_client->name);
 }
 
-	
 void Host_Version_f (void)
 {
 	Com_Printf ("Version %4.2f\n", VERSION);

@@ -29,4 +29,4 @@ xcopy 3rdparty\lib_dxe release /E
 
 rd /s /q %QDOSDEVBASE%\RELEASE
 
-cd /D cd /D %QDOSDEVBASE%\
+cd /D %QDOSDEVBASE%\
