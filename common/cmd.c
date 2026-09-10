@@ -114,7 +114,7 @@ void Cbuf_InsertText (char *text)
 	templen = cmd_text.cursize;
 	if (templen)
 	{
-		temp = calloc (templen, 1);
+		temp = Z_Malloc (templen);
 		memcpy (temp, cmd_text.data, templen);
 		SZ_Clear (&cmd_text);
 	}
@@ -128,7 +128,7 @@ void Cbuf_InsertText (char *text)
 	if (templen)
 	{
 		SZ_Write (&cmd_text, temp, templen);
-		free (temp);
+		Z_Free (temp);
 	}
 }
 
@@ -313,6 +313,7 @@ void Cmd_Exec_f (void)
 {
 	char	*f;
 	char	*s;
+	int		mark;
 
 	if (Cmd_Argc () != 2)
 	{
@@ -321,6 +322,7 @@ void Cmd_Exec_f (void)
 	}
 
 	s = Cmd_Argv(1);
+	mark = Hunk_LowMark ();
 
 	if (!strncmp(s,"default.cfg",11) || quakerc_init) /* FS: unbindall protection hack */
 	{
@@ -336,7 +338,7 @@ void Cmd_Exec_f (void)
 		}
 	}
 
-	f = (char *)COM_LoadFile(s, COM_LOADFILE_ZMALLOC);
+	f = (char *)COM_LoadHunkFile (s);
 	if (!f)
 	{
 		Com_Printf ("couldn't exec %s\n",s);
@@ -347,7 +349,7 @@ void Cmd_Exec_f (void)
 		Com_Printf ("execing %s\n",s);
 
 	Cbuf_InsertText (f);
-	Z_Free(f);
+	Hunk_FreeToLowMark (mark);
 }
 
 
@@ -365,6 +367,23 @@ void Cmd_Echo_f (void)
 	for (i=1 ; i<Cmd_Argc() ; i++)
 		Com_Printf ("%s ",Cmd_Argv(i));
 	Com_Printf ("\n");
+}
+
+/*
+===============
+Cmd_Alias_f
+
+Creates a new command that executes a command string (possibly ; seperated)
+===============
+*/
+
+char *CopyString (char *in)
+{
+	char	*out;
+	
+	out = Z_Malloc (strlen(in)+1);
+	strcpy (out, in);
+	return out;
 }
 
 /*
@@ -410,19 +429,14 @@ void Cmd_Alias_f (void)
 		{
 			if (!strcmp(s, a->name))
 			{
-				free (a->value);
+				Z_Free (a->value);
 				break;
 			}
 		}
 
 		if (!a)
 		{
-			a = malloc (sizeof(cmdalias_t));
-			if (!a)
-			{
-				Sys_Error("Cmd_Alias_f: out of memory");
-				return;
-			}
+			a = Z_Malloc (sizeof(cmdalias_t));
 			a->next = cmd_alias;
 			cmd_alias = a;
 		}
@@ -439,12 +453,7 @@ void Cmd_Alias_f (void)
 		}
 		Q_strlcat (cmd, "\n", sizeof(cmd));
 
-		a->value = strdup (cmd);
-		if (!a->value)
-		{
-			Sys_Error("Cmd_Alias_f: out of memory");
-			return;
-		}
+		a->value = CopyString (cmd);
 		break;
 	}
 }
@@ -470,8 +479,8 @@ void Cmd_Unalias_f (void)
 			if (!strcmp(Cmd_Argv(1), a->name))
 			{
 				prev->next = a->next;
-				free (a->value);
-				free (a);
+				Z_Free (a->value);
+				Z_Free (a);
 				prev = a;
 				return;
 			}
@@ -493,8 +502,8 @@ void Cmd_Unaliasall_f (void)
 	while (cmd_alias)
 	{
 		blah = cmd_alias->next;
-		free(cmd_alias->value);
-		free(cmd_alias);
+		Z_Free(cmd_alias->value);
+		Z_Free(cmd_alias);
 		cmd_alias = blah;
 	}
 }
@@ -596,7 +605,7 @@ void Cmd_TokenizeString (char *text)
 // clear the args from the last string
 	for (i = 0; i < cmd_argc; i++)
 	{
-		free (cmd_argv[i]);
+		Z_Free (cmd_argv[i]);
 	}
 
 	cmd_argc = 0;
@@ -629,12 +638,7 @@ void Cmd_TokenizeString (char *text)
 		if (cmd_argc < MAX_ARGS)
 		{
 			size_t len = Q_strlen(com_token)+1;
-			cmd_argv[cmd_argc] = malloc (len);
-			if (!cmd_argv[cmd_argc])
-			{
-				Sys_Error("Cmd_TokenizeString: out of memory");
-				return;
-			}
+			cmd_argv[cmd_argc] = Z_Malloc(len);
 			Q_strlcpy (cmd_argv[cmd_argc], com_token, len);
 			cmd_argc++;
 		}
@@ -669,18 +673,8 @@ void    Cmd_AddCommand (char *cmd_name, xcommand_t function)
 		}
 	}
 
-	cmd = malloc(sizeof(cmd_function_t));
-	if (!cmd)
-	{
-		Sys_Error("Cmd_AddCommand: out of memory");
-		return;
-	}
-	cmd->name = strdup(cmd_name);
-	if (!cmd->name)
-	{
-		Sys_Error("Cmd_AddCommand: out of memory");
-		return;
-	}
+	cmd = Z_Malloc(sizeof(cmd_function_t));
+	cmd->name = CopyString(cmd_name);
 	cmd->function = function;
 	cmd->next = cmd_functions;
 	cmd_functions = cmd;
@@ -706,8 +700,9 @@ void	Cmd_RemoveCommand (char *cmd_name)
 		}
 		if (!strcmp (cmd_name, cmd->name))
 		{
+			Z_Free(cmd->name);
 			*back = cmd->next;
-			free (cmd);
+			Z_Free (cmd);
 			return;
 		}
 		back = &cmd->next;
@@ -1014,11 +1009,11 @@ void Cmd_RemoveAllCommands (void)
 
 		if (alias->value)
 		{
-			free(alias->value);
+			Z_Free(alias->value);
 			alias->value = NULL;
 		}
 
-		free(alias);
+		Z_Free(alias);
 		alias = NULL;
 	}
 
@@ -1028,17 +1023,17 @@ void Cmd_RemoveAllCommands (void)
 
 		if (cmd->name)
 		{
-			free(cmd->name);
+			Z_Free(cmd->name);
 			cmd->name = NULL;
 		}
 
-		free(cmd);
+		Z_Free(cmd);
 		cmd = NULL;
 	}
 
 	for (i = 0; i < cmd_argc; i++)
 	{
-		free(cmd_argv[i]);
+		Z_Free(cmd_argv[i]);
 		cmd_argv[i] = NULL;
 	}
 }

@@ -937,8 +937,6 @@ void Cache_Init (void)
 {
 	cache_head.next = cache_head.prev = &cache_head;
 	cache_head.lru_next = cache_head.lru_prev = &cache_head;
-
-	Cmd_AddCommand ("flush", Cache_Flush);
 }
 
 /*
@@ -1107,6 +1105,7 @@ void Memory_Init (void *buf, int size)
 	mainzone = Hunk_AllocName (zonesize, "zone" );
 	Z_ClearZone (mainzone, zonesize);
 
+	Cmd_AddCommand ("flush", Cache_Flush);
 	Cmd_AddCommand ("hunk_print", Hunk_Print_f); //johnfitz
 }
 
