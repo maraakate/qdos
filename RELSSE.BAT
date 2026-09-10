@@ -8,12 +8,14 @@ del /q qdosfx.exe
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile USE_SSE=1 -j4
-UPX -9 %QDOSDEVBASE%\QUAKE\QDOS.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 %QDOSDEVBASE%\QUAKE\QDOS.EXE
 
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile USE_SSE=1 GLQUAKE=1 -j4
-UPX -9 %QDOSDEVBASE%\QUAKE\QDOSFX.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 %QDOSDEVBASE%\QUAKE\QDOSFX.EXE
 
 cd /D %QDOSDEVBASE%\QW
 del /q qw.exe
@@ -22,12 +24,14 @@ del /q qwdosfx.exe
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile USE_SSE=1 -j4
-UPX -9 E:\PROJ\QDOS\QW\QW.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 E:\PROJ\QDOS\QW\QW.EXE
 
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile USE_SSE=1 GLQUAKE=1 -j4
-UPX -9 E:\PROJ\QDOS\QW\QWDOSFX.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 E:\PROJ\QDOS\QW\QWDOSFX.EXE
 
 del /q "%QDOSDEVBASE%\QDOS_SSE_LATEST.7Z"
 

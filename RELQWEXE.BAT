@@ -10,11 +10,14 @@ cd /D %QDOSDEVBASE%\QW
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile -j4
-UPX -9 %QDOSDEVBASE%\QW\QW.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 %QDOSDEVBASE%\QW\QW.EXE
+
 make -f makefile clean
 make -f makefile GLQUAKE=1 clean
 make -f makefile GLQUAKE=1 -j4
-UPX -9 %QDOSDEVBASE%\QW\QWDOSFX.EXE
+REM FS: DO NOT COMPRESS THE BINARIES - CAUSES SUBTLE PROBLEMS!
+REM UPX -9 %QDOSDEVBASE%\QW\QWDOSFX.EXE
 
 cd..
 md release
