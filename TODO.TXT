@@ -1,6 +1,3 @@
-* Get registration sequence stuff working from Q2 so we don't reload the BSP
-  if it's the same.  From here you have to implement flushmap as well.
-
 * Fix ref_gl to be like Q2 so it's dynamic.
 
 * Fix ref_soft to have Q2's version that is not tied to that crappy
@@ -15,8 +12,6 @@
 
 * ref_gl mtex is incredibly slow with mesa and sage.  Completely unusable.
   Figure out why.
-
-* Add 'game' command to QW.
 
 * When changing 'game' dynamically we should reload the WADs for
   console backdrop, etc.

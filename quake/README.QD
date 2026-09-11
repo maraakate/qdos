@@ -167,6 +167,8 @@ To summarize:
    ULTRAMID -Q.  Then run, ULTRAMID -F -Q.  This will initialize your card.
    For a batch script that handles this issue please see:
     http://dk.toastednet.org/QDOS/GUSFIX.ZIP
+* DO NOT COMPRESS THE BINARIES WITH UPX!  IT WILL CAUSE SUBTLE MEMORY
+  CORRUPTION BUGS THAT ARE HARD TO DEBUG!
 
 6 - Final Thoughts
 ---------------------------------------------------------

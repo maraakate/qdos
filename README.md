@@ -57,21 +57,22 @@ QDOS has many features, I can't remember each one that me or others have added
 * Gun model is drawn if FOV > 90.
 * Gamespy Server Browser accessible from Multiplayer Menu and with slist2
   command.  Adapted from Q2DOS.
-* BSP2 and 2PSB support. Code (with some slight readaptations) from QuakeSpasm.
-  Additonal help from sezero.  These maps may need things like:
+* Partial BSP2 and 2PSB support. Code (with some slight readaptations) from
+  QuakeSpasm.  Additonal help from sezero.  These maps may need things like:
   r_maxedges and r_maxsurfs set to very high values.  Try setting both
   to 25000 and restarting the map if you see disappearing objects as you
   look around.
 * WAV and Ogg Vorbis streaming music support.  Put tracks in 
   id1/music/trackXX format.
-* Some FitzQuake extensions in QWDOS, like extended limits and chunked downloads.
+* Some FitzQuake extensions in QWDOS, like extended limits and chunked
+  downloads.
 * HTTP downloading via CURL in QWDOS for QuakeForge servers.
 * -cddir for specifiy a cd drive path for pak files.  Also for keeping
   WAV/OGG music in a separate drive.
-* 3DFX Voodoo rendering with fxMesa 6.4.2!  Check voodoo directory for 
+* 3DFX Voodoo rendering with Mesa and SAGE!  Check voodoo directory for 
   your glide3x.dxe.
 
-New CVARs and CMDs:
+Some new CVARs and CMDs:
 
 * CL_NODEMO -- Startup demos are disabled > 1.
 * CL_UNBINDALL_PROTECTION -- Protects your CVARs from accidentally being
@@ -112,8 +113,8 @@ is required to have at least 64MB of RAM.  Some mods may require more.
 I'd highly recommend allocating at least 96MB if your system can
 support this.  A Pentium 2 processor is also highly recommended.
 
-To play at extreme SVGA resolutions with acceptable (i.e. >= 40FPS) framerates a
-P3 ~800MHZ processor or higher is recommended.
+To play at extreme SVGA resolutions with acceptable (i.e. >= 40FPS) framerates
+a P3 ~800MHZ processor or higher is recommended.
 
 Online play over TCP/IP will require a NIC with a Packet Driver and a
 properly configured WATTCP.CFG in your root /QUAKE directory.  IPX and
@@ -164,6 +165,8 @@ To summarize:
    ULTRAMID -Q.  Then run, ULTRAMID -F -Q.  This will initialize your card.
    For a batch script that handles this issue please see:
     http://dk.toastednet.org/QDOS/GUSFIX.ZIP
+* DO NOT COMPRESS THE BINARIES WITH UPX!  IT WILL CAUSE SUBTLE MEMORY
+  CORRUPTION BUGS THAT ARE HARD TO DEBUG!
 
 6. - Final Thoughts
 ---------------------------------------------------------
