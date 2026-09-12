@@ -1324,6 +1324,9 @@ void SV_SpawnServer (char *server, qboolean loadgame)
 	edict_t	*ent;
 	int		i;
 
+	if (!dedicated->intValue)
+		R_BeginRegistration(); /* FS */
+
 	// let's not have any servers with no name
 	if (hostname->string[0] == 0)
 		Cvar_Set ("hostname", "QDOS UNNAMED");

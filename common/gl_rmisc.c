@@ -235,6 +235,8 @@ void R_Init (void)
 	/* FS */
 	gl_zfar_dist = Cvar_Get("gl_zfar_dist", "8192", CVAR_ARCHIVE);
 	Cvar_Set_Description("gl_zfar_dist", "Adjusts the zFar distance.  May need to be inreased for larger maps.");
+	gl_nodelete = Cvar_Get("gl_nodelete", "0", CVAR_ARCHIVE);
+	Cvar_Set_Description("gl_nodelete", "Set to 1 to keep all loaded textures in video memory like the original GLQuake.");
 
 	R_InitBubble();
 

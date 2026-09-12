@@ -5854,11 +5854,35 @@
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
 			<File
+				RelativePath="..\common\adivtab.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\anorm_dots.h"
 				>
 			</File>
 			<File
 				RelativePath="..\common\anorms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\asm_draw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\asm_i386.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\block16.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\block8.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\bspfile.h"
 				>
 			</File>
 			<File
@@ -5874,7 +5898,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\cmd.h"
+				>
+			</File>
+			<File
 				RelativePath="cmd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\common.h"
 				>
 			</File>
 			<File
@@ -5902,7 +5934,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\d_ifacea.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\d_local.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\dosisms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\dr_flac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\dr_mp3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\dr_wav.h"
 				>
 			</File>
 			<File
@@ -5911,6 +5963,10 @@
 			</File>
 			<File
 				RelativePath="..\common\gl_func.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\gl_model.h"
 				>
 			</File>
 			<File
@@ -5927,6 +5983,10 @@
 			</File>
 			<File
 				RelativePath="menu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\model.h"
 				>
 			</File>
 			<File
@@ -5978,6 +6038,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\quakeasm.h"
+				>
+			</File>
+			<File
 				RelativePath="quakedef.h"
 				>
 			</File>
@@ -5987,6 +6051,10 @@
 			</File>
 			<File
 				RelativePath="..\common\r_shared.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\render.h"
 				>
 			</File>
 			<File
@@ -6027,6 +6095,10 @@
 			</File>
 			<File
 				RelativePath="vid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\vid.h"
 				>
 			</File>
 			<File

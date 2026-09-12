@@ -31,6 +31,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer);
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
 void Mod_LoadAliasModel (model_t *mod, void *buffer);
 model_t *Mod_LoadModel (model_t *mod, qboolean crash);
+void Mod_UpdateAliasRegistration (model_t *mod);
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
 
@@ -249,24 +250,21 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 	unsigned *buf;
 	byte	stackbuf[1024];		// avoid dirtying the cache heap
 
+	mod->registration_sequence = registration_sequence;
+
 	if (!mod->needload)
 	{
 		if (mod->type == mod_alias)
 		{
 			d = Cache_Check (&mod->cache);
 			if (d)
+			{
+				Mod_UpdateAliasRegistration(mod);
 				return mod;
+			}
 		}
 		else
 			return mod;		// not cached at all
-	}
-
-//
-// because the world is so huge, load it one piece at a time
-//
-	if (!crash)
-	{
-	
 	}
 	
 //
@@ -2395,6 +2393,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 //
 	pskintype = (daliasskintype_t *)&pinmodel[1];
 	pskintype = Mod_LoadAllSkins (pheader->numskins, pskintype);
+	pheader->skintype = pskintype->type;
 
 //
 // load base s and t vertices
@@ -2678,4 +2677,29 @@ void Mod_Print (void)
 	Com_Printf ("%i models\n",mod_numknown); //johnfitz -- print the total too
 }
 
+void Mod_UpdateAliasRegistration (model_t *mod)
+{
+	int i;
+	int j;
+	gltexture_t *glt;
+	aliashdr_t *paliashdr = (aliashdr_t *)Mod_Extradata(mod);
 
+	for (i = 0; i < paliashdr->numskins; i++)
+	{
+		for (j = 0, glt = gltextures; j < numgltextures; j++, glt++)
+		{
+			if (paliashdr->skintype == ALIAS_SKIN_SINGLE)
+			{
+				if (paliashdr->gl_texturenum[i][0] == glt->texnum)
+				{
+					glt->registration_sequence = registration_sequence;
+					break;
+				}
+			}
+			else
+			{
+				/*FS: FIXME: Doesn't work with ALIAS_SKIN_GROUP yet. */
+			}
+		}
+	}
+}

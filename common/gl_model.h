@@ -333,6 +333,7 @@ typedef struct {
 	int					gl_texturenum[MAX_SKINS][4];
 	int					texels[MAX_SKINS];	// only for player skins
 	maliasframedesc_t	frames[1];	// variable sized
+	aliasskintype_t		skintype; /* FS */
 } aliashdr_t;
 
 #define	MAXALIASVERTS	2000
@@ -444,7 +445,7 @@ typedef struct model_s
 // additional model data
 //
 	cache_user_t	cache;		// only access through Mod_Extradata
-
+	int			registration_sequence; /* FS: From Quake 2. */
 } model_t;
 
 //============================================================================
@@ -457,5 +458,24 @@ void	Mod_TouchModel (char *name);
 
 mleaf_t *Mod_PointInLeaf (float *p, model_t *model);
 byte	*Mod_LeafPVS (mleaf_t *leaf, model_t *model);
+
+//============================================================================
+
+typedef struct
+{
+	unsigned short crc;
+	int		texnum;
+	char	identifier[MAX_QPATH];
+	int		width, height;
+	qboolean	mipmap;
+	int		registration_sequence; /* FS: From Quake 2. */
+} gltexture_t;
+
+#define	MAX_GLTEXTURES	2048 /* FS: Was 1024. */
+
+extern int registration_sequence; /* FS: From Quake 2. */
+
+extern gltexture_t	gltextures[MAX_GLTEXTURES];
+extern int			numgltextures;
 
 #endif	// __MODEL__

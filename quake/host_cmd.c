@@ -796,7 +796,7 @@ void Host_Map_f (void)
 
 	if (COM_FOpenFile (level, &f) == -1)
 	{
-		Com_Printf ("cannot find map %s", level);
+		Com_Printf ("cannot find map %s\n", level);
 		return;
 	}
 

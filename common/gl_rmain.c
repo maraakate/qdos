@@ -113,6 +113,7 @@ cvar_t	*r_waterwarp; /* FS: TODO FIXME dummy */
 cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemode blah blah at cmdline or autoexec.cfg */
 
 cvar_t	*gl_zfar_dist; /* FS */
+cvar_t	*gl_nodelete; /* FS */
 
 void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 

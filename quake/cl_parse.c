@@ -394,6 +394,7 @@ void CL_ParseServerInfo (void)
 //
 // now we try to load everything else until a cache allocation fails
 //
+	R_BeginRegistration();
 
 	for (i=1 ; i<nummodels ; i++)
 	{
@@ -421,6 +422,8 @@ void CL_ParseServerInfo (void)
 	//messages to be duplicates if the map has changed in between
 	con_lastcenterstring[0] = 0;
 	//johnfitz
+
+	R_EndRegistration();
 
 	Hunk_Check ();		// make sure nothing is hurt
 

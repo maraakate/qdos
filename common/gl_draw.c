@@ -36,6 +36,7 @@ qpic_t		*draw_backtile;
 int			translate_texture;
 int			char_texture;
 int			cs_texture; // crosshair texture
+int			conback_texture;
 
 static byte cs_data[64] = {
 	0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff,
@@ -68,18 +69,14 @@ int		gl_filter_max = GL_LINEAR;
 
 int		texels;
 
-typedef struct
-{
-	unsigned short crc;
-	int		texnum;
-	char	identifier[64];
-	int		width, height;
-	qboolean	mipmap;
-} gltexture_t;
+int registration_sequence; /* FS: From Quake 2. */
 
-#define	MAX_GLTEXTURES	1024
 gltexture_t	gltextures[MAX_GLTEXTURES];
 int			numgltextures;
+
+gltexture_t *char_texture_ptr;
+gltexture_t *cs_texture_ptr;
+gltexture_t *conback_texture_ptr;
 
 void GL_Bind (int texnum)
 {
@@ -389,6 +386,33 @@ stuff:
 	//FIXME: warpimages need to be redrawn, too.
 }
 
+static void R_SetGlobalTexturePtrs (void)
+{
+	int i;
+	gltexture_t *glt;
+
+	for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
+	{
+		if (char_texture == glt->texnum)
+		{
+			char_texture_ptr = glt;
+			continue;
+		}
+
+		if (cs_texture == glt->texnum)
+		{
+			cs_texture_ptr = glt;
+			continue;
+		}
+
+		if (conback_texture == glt->texnum)
+		{
+			conback_texture_ptr = glt;
+			continue;
+		}
+	}
+}
+
 /*
 ===============
 Draw_Init
@@ -408,6 +432,8 @@ void Draw_Init (void)
 	int start;
 	byte    *ncdata;
 	GLint value = 0;
+
+	registration_sequence = 1;
 
 	gl_nobind = Cvar_Get("gl_nobind", "0", 0);
 	gl_max_size = Cvar_Get("gl_max_size", "1024", CVAR_NOSET);
@@ -476,7 +502,7 @@ void Draw_Init (void)
 	glTexParameterf_fp(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	gl = (glpic_t *)conback->data;
-	gl->texnum = GL_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false);
+	gl->texnum = conback_texture = GL_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false);
 	gl->sl = 0;
 	gl->sh = 1;
 	gl->tl = 0;
@@ -499,8 +525,9 @@ void Draw_Init (void)
 	//
 	draw_disc = Draw_PicFromWad ("disc");
 	draw_backtile = Draw_PicFromWad ("backtile");
-}
 
+	R_SetGlobalTexturePtrs(); /* FS */
+}
 
 /*
 ================
@@ -1339,7 +1366,7 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 	s = width*height;
 	crc = CRC_Block(data, s);
 
-	// see if the texture is allready present
+	// see if the texture is already present
 	if (identifier[0])
 	{
 		for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
@@ -1352,15 +1379,38 @@ int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 					Com_DPrintf(DEVELOPER_MSG_VIDEO, "GL_LoadTexture: cache mismatch, replacing old texture\n");
 					goto GL_LoadTexture_setup; // drop out with glt pointing to the texture to replace
 				}
+				glt->registration_sequence = registration_sequence;
 				return glt->texnum;
 			}
 		}
 	}
 
+	// find a free image_t
+	for (i = 0, glt = gltextures; i < numgltextures; i++, glt++)
+	{
+		if (!glt->texnum)
+			break;
+	}
+
+#if 0
 	// LordHavoc: this was an else condition, causing disasterous results,
 	// whoever at id or threewave must've been half asleep...
 	glt = &gltextures[numgltextures++];
 	glt->texnum = texture_extension_number++;
+#else
+	if (i == numgltextures)
+	{
+		if (numgltextures == MAX_GLTEXTURES)
+		{
+			Sys_Error("MAX_GLTEXTURES");
+			return 0;
+		}
+		numgltextures++;
+	}
+	glt = &gltextures[i];
+	glt->texnum = texture_extension_number++;
+#endif
+
 	Q_strlcpy (glt->identifier, identifier, sizeof(glt->identifier));
 
 // LordHavoc: label to drop out of the loop into the setup code
@@ -1369,6 +1419,7 @@ GL_LoadTexture_setup:
 	glt->width = width;
 	glt->height = height;
 	glt->mipmap = mipmap;
+	glt->registration_sequence = registration_sequence;
 
 	if (!dedicated->value)
 	{
@@ -1433,4 +1484,48 @@ void GL_ShutdownTexures (void)
 	}
 
 	menu_numcachepics = 0;
+}
+
+static int bInRegistration;
+
+void R_BeginRegistration (void)
+{
+	if (bInRegistration) /* FS: Have to do it this way because SV_SpawnServer() and online play. */
+		return;
+
+	registration_sequence++;
+
+	char_texture_ptr->registration_sequence = registration_sequence;
+	cs_texture_ptr->registration_sequence = registration_sequence;
+	conback_texture_ptr->registration_sequence = registration_sequence;
+
+	bInRegistration = true;
+}
+
+void R_EndRegistration (void)
+{
+	int			i;
+	gltexture_t *tex;
+
+	if (gl_nodelete->intValue)
+		return;
+
+	Com_DPrintf(DEVELOPER_MSG_STANDARD, "Sequence: %d\n", registration_sequence);
+
+	for (i = 0, tex = gltextures; i < numgltextures; i++, tex++)
+	{
+		if (tex->registration_sequence
+			&& tex->registration_sequence != registration_sequence
+			&& !Q_StrIsNullOrEmpty(tex->identifier) /* FS: Empty identifiter with a registartion_sequence is a hint that it's a pic from a WAD. */
+			&& !strstr(tex->identifier, ".mdl") /* FS: FIXME: Doesn't work with ALIAS_SKIN_GROUP yet. */
+			)
+		{
+			//Com_DPrintf(DEVELOPER_MSG_VERBOSE, "Freeing glTexture: %s %d\n", tex->identifier, tex->registration_sequence);
+			glDeleteTextures_fp(1, (unsigned int *)&tex->texnum);
+			memset(tex, 0, sizeof(gltexture_t));
+			continue;
+		}
+	}
+
+	bInRegistration = false;
 }

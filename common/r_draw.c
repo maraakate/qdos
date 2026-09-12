@@ -906,3 +906,6 @@ void R_ZDrawSubmodelPolys (model_t *pmodel)
 	}
 }
 
+/* FS: Stubs needed for OpenGL */
+void R_BeginRegistration (void) {}
+void R_EndRegistration (void) {}

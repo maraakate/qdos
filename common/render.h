@@ -204,6 +204,10 @@ void R_ClearParticles (void);
 void R_DrawParticles (void);
 void R_DrawWaterSurfaces (void);
 
+/* FS */
+void R_BeginRegistration (void);
+void R_EndRegistration (void);
+
 //
 // surface cache related
 //
