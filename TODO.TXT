@@ -19,3 +19,7 @@
 * Fix Win32 requiring to set -ip if you have multiple adapters.
 
 * Skin downloading is broken if it doesn't exist on the HTTP server.
+
+* Having a GUS PnP ("InterWave") in a system, but not properly initialized
+  will crash the game on load if INTERWAVE environment var is set with
+  a valid IW.INI.
