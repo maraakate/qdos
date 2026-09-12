@@ -113,6 +113,10 @@ void MaskExceptions (void);
 void Sys_PushFPCW_SetHigh (void);
 void Sys_PopFPCW (void);
 
+#ifdef GLQUAKE
+extern void (*DOSGL_Shutdown) (void);
+#endif
+
 #define LEAVE_FOR_CACHE (512*1024)		//FIXME: tune
 #define LOCKED_FOR_MALLOC (128*1024)	//FIXME: tune
 
@@ -160,6 +164,10 @@ static void Sys_DetectWin95 (void)
 	}
 	else
 	{
+#ifdef GLQUAKE
+		printf("GLQuake for DOS cannot run under Windows.  Aborting.\n");
+		exit(0);
+#endif
 		printf("Microsoft Windows detected.  Please run Quake in pure DOS for best stability.\n"); /* FS: Warning */
 		win95 = 1;
 		lockunlockmem = COM_CheckParm ("-winlockunlock");
@@ -423,9 +431,26 @@ void Sys_Init(void)
 	Sys_InitDXE3();
 }
 
+static void Sys_SetTextMode (void)
+{
+	static int bSetTextMode = 0;
+
+	if (bSetTextMode) /* FS: Setting the text mode again may wipe whatever error we had from Sys_Error(). */
+		return;
+
 #ifdef GLQUAKE
-extern void (*DOSGL_Shutdown) (void);
+	/* FS: Desperate attempt to fix the mode if we bomb in OpenGL. */
+	if (DOSGL_Shutdown)
+		DOSGL_Shutdown();
 #endif
+
+	// return to text mode
+	regs.h.ah = 0;
+	regs.h.al = 0x3;
+	dos_int86(0x10);
+
+	bSetTextMode = 1;
+}
 
 void Sys_Shutdown(void)
 {
@@ -439,18 +464,10 @@ void Sys_Shutdown(void)
 		dos_unlockmem (quakeparms.membase, quakeparms.memsize);
 	}
 
-	/* FS: Desperate attempt to fix the mode if we bomb in OpenGL. */
-#ifdef GLQUAKE
-	if (DOSGL_Shutdown)
-		DOSGL_Shutdown();
-
-	regs.h.ah = 0;
-	regs.h.al = 0x3;
-	dos_int86(0x10);
-#endif
+	Sys_SetTextMode();
 
 	__dpmi_free_physical_address_mapping(&info);
-	__djgpp_nearptr_disable(); /* FS: Everyone else is a master DOS DPMI programmer.  Pretty sure CWSDPMI is already taking care of this... */
+	__djgpp_nearptr_disable();
 }
 
 // Knightmare- added this to fix CPU usage
@@ -536,7 +553,6 @@ void Sys_Printf (const char *fmt, ...)
 
 void Sys_AtExit (void)
 {
-
 // shutdown only once (so Sys_Error can call this function to shutdown, then
 // print the error message, then call exit without exit calling this function
 // again)
@@ -565,6 +581,7 @@ void Sys_Quit (void)
 #endif
 
 	Host_Shutdown();
+	Sys_SetTextMode();
 
 #ifndef GLQUAKE
 // do the text mode sell screen
@@ -593,15 +610,26 @@ void Sys_Error (const char *error, ...)
     va_list     argptr;
     char    string[MAXPRINTMSG];
 
-    va_start (argptr,error);
+#if 0 /* FS: Force divide by zero for testing exception handler. */
+	int j = 0;
+	int x = 1;
+	int z = 0;
+
+	j = x / z;
+	printf("test %d\n", j);
+#endif
+
+	va_start (argptr,error);
     Q_vsnprintf (string, sizeof(string), error,argptr);
     va_end (argptr);
 
 	Host_Shutdown();
+	Sys_SetTextMode();
+
 	fprintf(stderr, "Error: %s\n", string);
 
 	__dpmi_free_physical_address_mapping(&info);
-	__djgpp_nearptr_disable(); /* FS: Everyone else is a master DOS DPMI programmer.  Pretty sure CWSDPMI is already taking care of this... */
+	__djgpp_nearptr_disable();
 
 	// Sys_AtExit is called by exit to shutdown the system
 	exit(1);
@@ -625,6 +653,11 @@ Sys_DoubleTime
 double Sys_DoubleTime (void)
 {
 	return (double) uclock() / (double) UCLOCKS_PER_SEC; /* FS: Accurate Clock (QIP) */
+}
+
+int	Sys_Milliseconds (void)
+{
+	return (double) uclock() / (UCLOCKS_PER_SEC / 1000.0);
 }
 
 /*
@@ -846,6 +879,32 @@ static void Sys_NoFPUExceptionHandler(int whatever)
 	exit (0);
 }
 
+/* FS: Modified from DJGPP source. */
+static void Sys_PCBeep (int freq, int len)
+{
+	int scale;
+	uclock_t curtime;
+
+	if (freq <= 0)
+	{
+		outportb(0x61, inportb(0x61) & ~3);
+		return;
+	}
+
+	curtime = (double)uclock() / (UCLOCKS_PER_SEC / 1000.0);
+	scale = 1193046 / freq;
+
+	outportb(0x43, 0xb6);
+	outportb(0x42, scale & 0xff);
+	outportb(0x42, scale >> 8);
+	outportb(0x61, inportb(0x61) | 3);
+
+	while (Sys_Milliseconds() < curtime + len)
+		;
+
+	outportb(0x61, inportb(0x61) & ~3);
+}
+
 /*
 ================
 Sys_DefaultExceptionHandler
@@ -853,6 +912,17 @@ Sys_DefaultExceptionHandler
 */
 static void Sys_DefaultExceptionHandler(int whatever)
 {
+	dos_restoreintr(9); /* FS: Give back the keyboard */
+
+	dos_unlockmem (&start_of_memory,
+		end_of_memory - (int)&start_of_memory);
+
+	Sys_PCBeep(800, 500);
+
+	Sys_SetTextMode();
+
+	__dpmi_free_physical_address_mapping(&info);
+	__djgpp_nearptr_disable();
 }
 
 void Sys_DebugLog(const char *file, const char *fmt, ...)

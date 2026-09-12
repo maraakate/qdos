@@ -74,6 +74,8 @@ cvar_t	*nehx17;
 cvar_t	*nehx18;
 cvar_t	*nehx19;
 
+cvar_t	*sv_allow_errorcmd; /* FS */
+
 int com_nummissionpacks; //johnfitz
 
 qboolean        com_modified;   // set true if using non-id files
@@ -85,6 +87,7 @@ qboolean		msg_suppress_1 = 0;
 void COM_InitFilesystem (void);
 void COM_Path_f (void);
 void COM_Dir_f (void); /* FS: From Quake 2 */
+void COM_Error_f (void); /* FS: From Quake 2 */
 
 // if a packfile directory differs from this, it is assumed to be hacked
 #define PAK0_COUNT		339	/* id1/pak0.pak - v1.0x */
@@ -1413,8 +1416,13 @@ void COM_Init (void)
 	Cvar_Set_Description("cmdline", "Adds command line parameters as script statements\nCommands lead with a +, and continue until a - or another +\nquake +prog jctest.qp +cmd amlev1\nquake -nosound +cmd amlev1");
 #endif // QUAKE1
 
+	/* FS: Allow use of the error cmd */
+	sv_allow_errorcmd = Cvar_Get("sv_allow_errorcmd", "0", CVAR_ARCHIVE);
+	Cvar_Set_Description("sv_allow_errorcmd", "Allow the use of error command.");
+
 	Cmd_AddCommand ("path", COM_Path_f);
 	Cmd_AddCommand ("dir", COM_Dir_f); /* FS: From Quake 2 */
+	Cmd_AddCommand ("error", COM_Error_f); /* FS: From Quake 2 */
 
 	COM_InitFilesystem ();
 	COM_CheckRegistered ();
@@ -3224,4 +3232,10 @@ void Com_sprintf (char *dest, int size, char *fmt, ...)
 	if (len < 0 || len >= size) {
 		Com_Printf ("Com_sprintf: overflow of %i in %i\n", len, size);
 	}
+}
+
+void COM_Error_f (void)
+{
+	if (sv_allow_errorcmd && sv_allow_errorcmd->intValue) /* FS: Disabled by default */
+		Sys_Error("%s", Cmd_Argv(1));
 }
