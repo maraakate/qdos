@@ -333,7 +333,6 @@ typedef struct {
 	int					gl_texturenum[MAX_SKINS][4];
 	int					texels[MAX_SKINS];	// only for player skins
 	maliasframedesc_t	frames[1];	// variable sized
-	aliasskintype_t		skintype; /* FS */
 } aliashdr_t;
 
 #define	MAXALIASVERTS	2000
@@ -446,6 +445,8 @@ typedef struct model_s
 //
 	cache_user_t	cache;		// only access through Mod_Extradata
 	int			registration_sequence; /* FS: From Quake 2. */
+	int skintype[MAX_SKINS]; /* FS */
+	int groupskins[MAX_SKINS]; /* FS */
 } model_t;
 
 //============================================================================

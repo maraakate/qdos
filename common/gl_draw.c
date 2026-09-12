@@ -1517,7 +1517,6 @@ void R_EndRegistration (void)
 		if (tex->registration_sequence
 			&& tex->registration_sequence != registration_sequence
 			&& !Q_StrIsNullOrEmpty(tex->identifier) /* FS: Empty identifiter with a registartion_sequence is a hint that it's a pic from a WAD. */
-			&& !strstr(tex->identifier, ".mdl") /* FS: FIXME: Doesn't work with ALIAS_SKIN_GROUP yet. */
 			)
 		{
 			//Com_DPrintf(DEVELOPER_MSG_VERBOSE, "Freeing glTexture: %s %d\n", tex->identifier, tex->registration_sequence);

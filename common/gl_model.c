@@ -264,7 +264,9 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 			}
 		}
 		else
+		{
 			return mod;		// not cached at all
+		}
 	}
 	
 //
@@ -2173,7 +2175,7 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 Mod_LoadAllSkins
 ===============
 */
-void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
+void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype, model_t *mod)
 {
 	int		i, j, k;
 	char	name[32];
@@ -2198,6 +2200,8 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 
 	for (i=0 ; i<numskins ; i++)
 	{
+		mod->skintype[i] = pskintype->type; /* FS */
+
 		if (pskintype->type == ALIAS_SKIN_SINGLE) {
 			Mod_FloodFillSkin( skin, pheader->skinwidth, pheader->skinheight );
 
@@ -2232,6 +2236,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			pskintype++;
 			pinskingroup = (daliasskingroup_t *)pskintype;
 			groupskins = LittleLong (pinskingroup->numskins);
+			mod->groupskins[i] = groupskins; /* FS */
 			pinskinintervals = (daliasskininterval_t *)(pinskingroup + 1);
 
 			pskintype = (void *)(pinskinintervals + groupskins);
@@ -2392,8 +2397,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 // load the skins
 //
 	pskintype = (daliasskintype_t *)&pinmodel[1];
-	pskintype = Mod_LoadAllSkins (pheader->numskins, pskintype);
-	pheader->skintype = pskintype->type;
+	pskintype = Mod_LoadAllSkins (pheader->numskins, pskintype, mod);
 
 //
 // load base s and t vertices
@@ -2679,16 +2683,17 @@ void Mod_Print (void)
 
 void Mod_UpdateAliasRegistration (model_t *mod)
 {
-	int i;
-	int j;
+	int i, j, k;
 	gltexture_t *glt;
-	aliashdr_t *paliashdr = (aliashdr_t *)Mod_Extradata(mod);
+	aliashdr_t *paliashdr;
+
+	paliashdr = (aliashdr_t *)Mod_Extradata(mod);
 
 	for (i = 0; i < paliashdr->numskins; i++)
 	{
 		for (j = 0, glt = gltextures; j < numgltextures; j++, glt++)
 		{
-			if (paliashdr->skintype == ALIAS_SKIN_SINGLE)
+			if (mod->skintype[i] == ALIAS_SKIN_SINGLE)
 			{
 				if (paliashdr->gl_texturenum[i][0] == glt->texnum)
 				{
@@ -2698,7 +2703,15 @@ void Mod_UpdateAliasRegistration (model_t *mod)
 			}
 			else
 			{
-				/*FS: FIXME: Doesn't work with ALIAS_SKIN_GROUP yet. */
+				// animating skin group.  yuck.
+				for (k = 0 ; k < mod->groupskins[i] ; k++)
+				{
+					if (paliashdr->gl_texturenum[i][k&3] == glt->texnum)
+					{
+						glt->registration_sequence = registration_sequence;
+						break;
+					}
+				}
 			}
 		}
 	}
