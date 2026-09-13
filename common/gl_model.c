@@ -172,14 +172,36 @@ byte *Mod_LeafPVS (mleaf_t *leaf, model_t *model)
 Mod_ClearAll
 ===================
 */
-void Mod_ClearAll (void)
+void Mod_ClearAll (qboolean bFreeCache)
 {
 	int		i;
 	model_t	*mod;
 	
-	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
-		if (mod->type != mod_alias)
+	for (i = 0, mod = mod_known; i < mod_numknown; i++, mod++)
+	{
+		if (bFreeCache)
+		{
+			if (mod->cache.data)
+			{
+				if (mod->type != mod_sprite)
+				{
+					Cache_Free(&mod->cache);
+				}
+			}
+
 			mod->needload = true;
+		}
+
+		if (mod->type != mod_alias)
+		{
+			mod->needload = true;
+		}
+	}
+
+	if (bFreeCache)
+	{
+		mod_numknown = 0;
+	}
 }
 
 /*

@@ -1480,12 +1480,30 @@ void GL_SelectTexture (GLenum target)
 	currenttarget = target;
 }
 
+extern int lightmap_textures, alphaskytexture, solidskytexture;
+
 void GL_ShutdownTexures (void)
 {
 	int i;
+	gltexture_t *tex;
 	cachepic_t *pic;
 
+	for (i = 0, tex = gltextures; i < numgltextures; i++, tex++)
+	{
+		if (tex->texnum)
+		{
+			glDeleteTextures_fp(1, (unsigned int *)&tex->texnum);
+			memset(tex, 0, sizeof(gltexture_t));
+			continue;
+		}
+	}
+
 	numgltextures = 0;
+	lightmap_textures = 0;
+	alphaskytexture = 0;
+	solidskytexture = 0;
+	texture_extension_number = 1;
+	r_framecount = 0;
 
 	for (pic = menu_cachepics, i = 0; i < menu_numcachepics; pic++, i++)
 	{

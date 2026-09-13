@@ -76,7 +76,7 @@ void R_InitParticleTexture (void)
 	// particle texture
 	//
 	particletexture = texture_extension_number++;
-    GL_Bind(particletexture);
+	GL_Bind(particletexture);
 
 	for (x=0 ; x<8 ; x++)
 	{
@@ -174,6 +174,7 @@ void R_Init (void)
 #ifdef QUAKE1
 	Cmd_AddCommand ("pointfile", R_ReadPointFile_f);
 #endif
+	Cmd_AddCommand ("vid_restart", R_Restart_f);
 
 	r_norefresh = Cvar_Get("r_norefresh", "0", 0);
 	r_lightmap = Cvar_Get("r_lightmap", "0", 0);
@@ -657,7 +658,23 @@ void R_Shutdown (void)
 	Cmd_RemoveCommand ("timerefresh");
 	Cmd_RemoveCommand ("envmap");
 	Cmd_RemoveCommand ("pointfile");
+	Cmd_RemoveCommand ("vid_restart");
 
 	Skin_FreeAll();
+	Mod_ClearAll(true);
 	GL_ShutdownTexures();
+}
+
+void R_Restart_f (void)
+{
+#if 1
+	Com_Printf("Not implemented!\n");
+#else
+	R_Shutdown();
+	R_InitTextures();
+	Draw_Init();
+	SCR_Init();
+	R_Init();
+	Sbar_Init();
+#endif
 }

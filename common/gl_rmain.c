@@ -1256,5 +1256,3 @@ void GL_CheckError (void)
 
 /* FS: TODO FIXME: dummy */
 void R_ClearDynamic (void) {}
-
-void R_Restart_f (void) {}
