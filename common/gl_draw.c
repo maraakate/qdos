@@ -80,6 +80,8 @@ gltexture_t *conback_texture_ptr;
 
 void GL_Bind (int texnum)
 {
+	GLenum err;
+
 	if (gl_nobind->intValue)
 		texnum = char_texture;
 	if (currenttexture == texnum)
@@ -90,6 +92,13 @@ void GL_Bind (int texnum)
 #else
 	glBindTexture_fp (GL_TEXTURE_2D, texnum);
 #endif
+
+	err = glGetError_fp();
+	if (err != GL_NO_ERROR) /* FS: Possible under DOS because of the malloc going on in the drivers and we're locking mem. */
+	{
+		Sys_Error("glBindTexture: %s\n", GL_GetErrorString(err));
+		return;
+	}
 }
 
 

@@ -109,6 +109,8 @@ GL_FUNCTION(void, glStencilFunc, (GLenum,GLint,GLuint))
 GL_FUNCTION(void, glStencilOp, (GLenum,GLenum,GLenum))
 GL_FUNCTION(void, glClearStencil, (GLint))
 
+GL_FUNCTION(GLenum, glGetError, (void))
+
 #ifdef UNDEF_GL_FUNCTION
 #undef GL_FUNCTION
 #undef UNDEF_GL_FUNCTION
@@ -184,6 +186,8 @@ GL_FUNCTION(void, glClearStencil, (GLint))
 #define glStencilFunc_fp	glStencilFunc
 #define glStencilOp_fp		glStencilOp
 #define glClearStencil_fp	glClearStencil
+
+#define glGetError_fp	glGetError
 
 #endif	/* !defined(GL_DLSYM) */
 

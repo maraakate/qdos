@@ -224,6 +224,7 @@ extern	cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemod
 
 extern	cvar_t	*gl_zfar_dist; /* FS */
 extern	cvar_t	*gl_nodelete; /* FS */
+extern	cvar_t	*gl_no_error_check; /* FS */
 
 extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
 extern	qboolean	mirror;
@@ -279,6 +280,7 @@ void GL_TextureMode (char *string);
 //
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
+void GL_CheckError (void);
 
 //
 // gl_rlight.c
@@ -313,5 +315,10 @@ void R_RenderBrushPoly (msurface_t *fa);
 #ifdef QUAKEWORLD
 void R_NetGraph (void);
 #endif
+
+//
+// gl_rmisc.c
+//
+const char *GL_GetErrorString (GLenum err);
 
 #endif // __GLQUAKE_H

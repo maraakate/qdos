@@ -212,6 +212,8 @@ DXE_EXPORT_TABLE (syms)
 	DXE_EXPORT (_stubinfo)
 	DXE_EXPORT (__djgpp_dos_sel)
 #endif
+	/* FS: GCC4 and up */
+	DXE_EXPORT (stpcpy)
 DXE_EXPORT_END
 
 

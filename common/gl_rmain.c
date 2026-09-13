@@ -114,6 +114,7 @@ cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemode blah 
 
 cvar_t	*gl_zfar_dist; /* FS */
 cvar_t	*gl_nodelete; /* FS */
+cvar_t	*gl_no_error_check; /* FS */
 
 void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
@@ -1056,6 +1057,7 @@ void R_RenderScene (void)
 	Test_Draw ();
 #endif
 
+	GL_CheckError();
 }
 
 
@@ -1234,6 +1236,21 @@ void R_RenderView (void)
 //		glFinish_fp ();
 		time2 = Sys_DoubleTime();
 		Com_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
+	}
+}
+
+static GLenum frameError;
+
+void GL_CheckError (void)
+{
+	frameError = glGetError_fp();
+	if (frameError && !gl_no_error_check->intValue)
+	{
+#ifdef _DEBUG
+		assert(frameError == GL_NO_ERROR);
+#else
+		Sys_Error("R_RenderScene gl error: %d", frameError);
+#endif
 	}
 }
 

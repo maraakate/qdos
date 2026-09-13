@@ -237,6 +237,8 @@ void R_Init (void)
 	Cvar_Set_Description("gl_zfar_dist", "Adjusts the zFar distance.  May need to be inreased for larger maps.");
 	gl_nodelete = Cvar_Get("gl_nodelete", "0", CVAR_ARCHIVE);
 	Cvar_Set_Description("gl_nodelete", "Set to 1 to keep all loaded textures in video memory like the original GLQuake.");
+	gl_no_error_check = Cvar_Get("gl_no_error_check", "1", CVAR_ARCHIVE);
+	Cvar_Set_Description("gl_no_error_check", "Triggers an assert when a glError() is triggered in debug builds.  In release builds will quit with a Sys_Error().");
 
 	R_InitBubble();
 
@@ -627,10 +629,33 @@ void D_FlushCaches (void)
 void Skin_FreeAll (void) {}
 #endif
 
+const char *GL_GetErrorString (GLenum err)
+{
+	switch (err)
+	{
+		case GL_INVALID_ENUM:
+			return "GL_INVALID_ENUM";
+		case GL_INVALID_VALUE:
+			return "GL_INVALID_VALUE";
+		case GL_INVALID_OPERATION:
+			return "GL_INVALID_OPERATION";
+		case GL_STACK_OVERFLOW:
+			return "GL_STACK_OVERFLOW";
+		case GL_STACK_UNDERFLOW:
+			return "GL_STACK_UNDERFLOW";
+		case GL_OUT_OF_MEMORY:
+			return "GL_OUT_OF_MEMORY";
+		default:
+			break;
+	}
+
+	return "Unknown error string";
+}
+
 void R_Shutdown (void)
 {
-	Cmd_RemoveCommand ("timerefresh");	
-	Cmd_RemoveCommand ("envmap");	
+	Cmd_RemoveCommand ("timerefresh");
+	Cmd_RemoveCommand ("envmap");
 	Cmd_RemoveCommand ("pointfile");
 
 	Skin_FreeAll();
