@@ -31,7 +31,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer);
 void Mod_LoadBrushModel (model_t *mod, void *buffer);
 void Mod_LoadAliasModel (model_t *mod, void *buffer);
 model_t *Mod_LoadModel (model_t *mod, qboolean crash);
-void Mod_UpdateAliasRegistration (model_t *mod);
+qboolean Mod_UpdateAliasRegistration (model_t *mod);
 
 byte	mod_novis[MAX_MAP_LEAFS/8];
 
@@ -259,8 +259,10 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 			d = Cache_Check (&mod->cache);
 			if (d)
 			{
-				Mod_UpdateAliasRegistration(mod);
-				return mod;
+				if (Mod_UpdateAliasRegistration(mod))
+				{
+					return mod; /* FS: If we aren't good then fall through and reload. */
+				}
 			}
 		}
 		else
@@ -2681,11 +2683,12 @@ void Mod_Print (void)
 	Com_Printf ("%i models\n",mod_numknown); //johnfitz -- print the total too
 }
 
-void Mod_UpdateAliasRegistration (model_t *mod)
+qboolean Mod_UpdateAliasRegistration (model_t *mod)
 {
 	int i, j, k;
 	gltexture_t *glt;
 	aliashdr_t *paliashdr;
+	int numfound = 0;
 
 	paliashdr = (aliashdr_t *)Mod_Extradata(mod);
 
@@ -2697,7 +2700,9 @@ void Mod_UpdateAliasRegistration (model_t *mod)
 			{
 				if (paliashdr->gl_texturenum[i][0] == glt->texnum)
 				{
+					//Com_DPrintf(DEVELOPER_MSG_VERBOSE, "Refresh: %s\n", glt->identifier);
 					glt->registration_sequence = registration_sequence;
+					numfound++;
 					break;
 				}
 			}
@@ -2708,11 +2713,22 @@ void Mod_UpdateAliasRegistration (model_t *mod)
 				{
 					if (paliashdr->gl_texturenum[i][k&3] == glt->texnum)
 					{
+						//Com_DPrintf(DEVELOPER_MSG_VERBOSE, "Refresh groupskin: %s\n", glt->identifier);
 						glt->registration_sequence = registration_sequence;
+						numfound++;
 						break;
 					}
 				}
 			}
 		}
 	}
+
+	if (!numfound || numfound < paliashdr->numskins)
+	{
+		mod->needload = true;
+		Cache_Free(&mod->cache);
+		return false; /* FS: Needs reloaded. */
+	}
+
+	return true;
 }
