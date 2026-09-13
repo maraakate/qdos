@@ -218,34 +218,34 @@ void R_Init (void)
 	r_zgraph = Cvar_Get("r_zgraph","0", 0);
 	r_graphheight = Cvar_Get("r_graphheight","10", 0);
 	r_clearcolor = Cvar_Get("r_clearcolor","2", 0);
-	Cvar_Set_Description("r_clearcolor", "The (by default) grey background filler seen when there is a hole in the map.");
+	Cvar_SetDescription("r_clearcolor", "The (by default) grey background filler seen when there is a hole in the map.");
 	r_waterwarp = Cvar_Get("r_waterwarp","1", CVAR_ARCHIVE); /* FS: Save it */
 	r_fullbright = Cvar_Get("r_fullbright","0", 0);
-	Cvar_Set_Description("r_fullbright", "Fullbright lighting.");
+	Cvar_SetDescription("r_fullbright", "Fullbright lighting.");
 	r_drawentities = Cvar_Get("r_drawentities","1", 0);
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel","1", 0);
 	r_aliasstats = Cvar_Get("r_polymodelstats","0", 0);
 	r_dspeeds = Cvar_Get("r_dspeeds","0", 0);
 	r_drawflat = Cvar_Get("r_drawflat", "0", 0);
-	Cvar_Set_Description("r_drawflat", "Draw flat single colour textures instead of the textures themselves.");
+	Cvar_SetDescription("r_drawflat", "Draw flat single colour textures instead of the textures themselves.");
 	r_ambient = Cvar_Get("r_ambient", "0", 0);
-	Cvar_Set_Description("r_ambient", "Adjusts the intensity of ambient lights.  Similar to gl_modulate.");
+	Cvar_SetDescription("r_ambient", "Adjusts the intensity of ambient lights.  Similar to gl_modulate.");
 	r_reportsurfout = Cvar_Get("r_reportsurfout", "0", 0);
-	Cvar_Set_Description("r_reportsurfout", "Report running out of surfaces.");
+	Cvar_SetDescription("r_reportsurfout", "Report running out of surfaces.");
 	r_maxsurfs = Cvar_Get("r_maxsurfs", "0", CVAR_LATCH);
-	Cvar_Set_Description("r_maxsurfs", "Maximum number of surfaces to draw.  This value may need to be raised if you see disappearing textures.");
+	Cvar_SetDescription("r_maxsurfs", "Maximum number of surfaces to draw.  This value may need to be raised if you see disappearing textures.");
 	r_numsurfs = Cvar_Get("r_numsurfs", "0", 0);
-	Cvar_Set_Description("r_numsurfs", "Report number of surfaces in use.");
+	Cvar_SetDescription("r_numsurfs", "Report number of surfaces in use.");
 	r_reportedgeout = Cvar_Get("r_reportedgeout", "0", 0);
-	Cvar_Set_Description("r_reportedgeout", "Report running out of edges.");
+	Cvar_SetDescription("r_reportedgeout", "Report running out of edges.");
 	r_maxedges = Cvar_Get("r_maxedges", "0", CVAR_LATCH);
-	Cvar_Set_Description("r_maxedges", "Maximum number of edges to draw.  This value may need to be raised if you see disappearing geometry.");
+	Cvar_SetDescription("r_maxedges", "Maximum number of edges to draw.  This value may need to be raised if you see disappearing geometry.");
 	r_numedges = Cvar_Get("r_numedges", "0", 0);
-	Cvar_Set_Description("r_numedges", "Report number of edges in use.");
+	Cvar_SetDescription("r_numedges", "Report number of edges in use.");
 	r_aliastransbase = Cvar_Get("r_aliastransbase", "200", 0);
 	r_aliastransadj = Cvar_Get("r_aliastransadj", "100", 0);
 	r_maxbmodeledges = Cvar_Get("r_maxbmodeledges", "0", 0); /* FS: For big boy mods */
-	Cvar_Set_Description("r_maxbmodeledges", "Maximum number of bmodel edges to draw.");
+	Cvar_SetDescription("r_maxbmodeledges", "Maximum number of bmodel edges to draw.");
 	r_gunfov = Cvar_Get("r_gunfov", "75", CVAR_ARCHIVE); /* FS */
 
 	Cvar_SetValue ("r_maxedges", (float)NUMSTACKEDGES);

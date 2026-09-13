@@ -534,7 +534,7 @@ Cmd_Init
 void Cmd_Init (void)
 {
 	cl_warncmd = Cvar_Get("cl_warncmd", "0", 0);
-	Cvar_Set_Description("cl_warncmd", "Warn about unknown commands.");
+	Cvar_SetDescription("cl_warncmd", "Warn about unknown commands.");
 
 //
 // register our commands

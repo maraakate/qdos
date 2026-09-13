@@ -62,13 +62,13 @@ void D_Init (void)
 
 	/* FS: Particle size control */
 	sw_particle_size_override = Cvar_Get("sw_particle_size_override", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("sw_particle_size_override", "Enable this to override particle size scaling with sw_particle_size, sw_particle_size_min, and sw_particle_size_max.");
+	Cvar_SetDescription("sw_particle_size_override", "Enable this to override particle size scaling with sw_particle_size, sw_particle_size_min, and sw_particle_size_max.");
 	sw_particle_size_min = Cvar_Get("sw_particle_size_min", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("sw_particle_size_min", "Minimum particle size.  Standard formula is resolution width divided by 320.  Use sw_particle_size_override to enable.");
+	Cvar_SetDescription("sw_particle_size_min", "Minimum particle size.  Standard formula is resolution width divided by 320.  Use sw_particle_size_override to enable.");
 	sw_particle_size_max = Cvar_Get("sw_particle_size_max", "8.5", CVAR_ARCHIVE);
-	Cvar_Set_Description("sw_particle_size_max", "Maximum particle size.  Standard formula is resolution width divided by 80 plus 0.5.  Use sw_particle_size_override to enable.");
+	Cvar_SetDescription("sw_particle_size_max", "Maximum particle size.  Standard formula is resolution width divided by 80 plus 0.5.  Use sw_particle_size_override to enable.");
 	sw_particle_size = Cvar_Get("sw_particle_size", "8", CVAR_ARCHIVE);
-	Cvar_Set_Description("sw_particle_size", "How many bits to shift for particle sizes.  Higher numbers are smaller particles.  Use sw_particle_size_override to enable.");
+	Cvar_SetDescription("sw_particle_size", "How many bits to shift for particle sizes.  Higher numbers are smaller particles.  Use sw_particle_size_override to enable.");
 
 	r_drawpolys = false;
 	r_worldpolysbacktofront = false;

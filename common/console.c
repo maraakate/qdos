@@ -299,9 +299,9 @@ void Con_Init (void)
 // register our commands
 //
 	con_notifytime = Cvar_Get("con_notifytime", "3", 0); //seconds
-	Cvar_Set_Description("con_notifytime", "Time (in seconds) a console notification message is displayed.");
+	Cvar_SetDescription("con_notifytime", "Time (in seconds) a console notification message is displayed.");
 	con_logcenterprint = Cvar_Get("con_logcenterprint", "1", 0);  //johnfitz
-	Cvar_Set_Description("con_logcenterprint", "Log centerprints to console.");
+	Cvar_SetDescription("con_logcenterprint", "Log centerprints to console.");
 	timestamp = Cvar_Get("timestamp", "0", 0); /* FS: Timestamp logs */
 
 	Cmd_AddCommand ("toggleconsole", Con_ToggleConsole_f);

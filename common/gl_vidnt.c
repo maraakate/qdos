@@ -1598,11 +1598,11 @@ void	VID_Init (unsigned char *palette)
 	vid_stretch_by_2 = Cvar_Get("vid_stretch_by_2","1", CVAR_ARCHIVE);
 	_windowed_mouse = Cvar_Get("_windowed_mouse","1", CVAR_ARCHIVE);
 	gl_ztrick = Cvar_Get("gl_ztrick", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_ztrick", "Toggles the use of a trick to prevent the clearing of the z-buffer between frames. When this variable is set to 1 the game will not clear the z-buffer between frames. This will result in increased performance but might cause problems for some display hardware.");
+	Cvar_SetDescription("gl_ztrick", "Toggles the use of a trick to prevent the clearing of the z-buffer between frames. When this variable is set to 1 the game will not clear the z-buffer between frames. This will result in increased performance but might cause problems for some display hardware.");
 	gl_displayrefresh = Cvar_Get("gl_displayrefresh", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_displayrefresh", "Refresh rate for fullscreen modes.  Set to 0 to disable.");
+	Cvar_SetDescription("gl_displayrefresh", "Refresh rate for fullscreen modes.  Set to 0 to disable.");
 	gl_conscale = Cvar_Get("gl_conscale", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_conscale", "Set to 0 to make the console width and height equal to the current resolution.Set to 1 to control it with conwidth and conheight cmdline.Requires game restart.");
+	Cvar_SetDescription("gl_conscale", "Set to 0 to make the console width and height equal to the current resolution.Set to 1 to control it with conwidth and conheight cmdline.Requires game restart.");
 	vid_fullscreen = Cvar_Get("vid_fullscreen", "1", CVAR_ARCHIVE);
 	r_mode_desktop = Cvar_Get("r_mode_desktop", "0", CVAR_ARCHIVE);
 

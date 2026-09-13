@@ -133,19 +133,19 @@ void SV_Init (void)
 
 	/* FS: New stuff */
 	sv_loadentfiles = Cvar_Get("sv_loadentfiles","1", CVAR_ARCHIVE); /* FS: Load external ent files */
-	Cvar_Set_Description("sv_loadentfiles", "Attempt to load external *.ent files if they exist.");
+	Cvar_SetDescription("sv_loadentfiles", "Attempt to load external *.ent files if they exist.");
 	sv_autosave = Cvar_Get("sv_autosave", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("sv_autosave", "Auto save when entering a new level in single player.");
+	Cvar_SetDescription("sv_autosave", "Auto save when entering a new level in single player.");
 	sv_altnoclip = Cvar_Get("sv_altnoclip","1", CVAR_ARCHIVE); //johnfitz
 	pq_fullpitch = Cvar_Get("pq_fullpitch", "0", 0); /* FS: ProQuake Shit */
 
 	/* FS: Gamespy Stuff */
 	sv_master_server_ip = Cvar_Get("sv_master_server_ip", SV_MASTER_ADDR, CVAR_ARCHIVE);
-	Cvar_Set_Description("sv_master_server_ip", "GameSpy Master Server IP for dedicated servers.");
+	Cvar_SetDescription("sv_master_server_ip", "GameSpy Master Server IP for dedicated servers.");
 	sv_master_server_port = Cvar_Get("sv_master_server_port", SV_MASTER_PORT, CVAR_ARCHIVE);
-	Cvar_Set_Description("sv_master_server_port", "GameSpy Master Server Port for dedicated servers.");
+	Cvar_SetDescription("sv_master_server_port", "GameSpy Master Server Port for dedicated servers.");
 	public_server = Cvar_Get("public", "0", 0);
-	Cvar_Set_Description("public", "Report server to a master server.");
+	Cvar_SetDescription("public", "Report server to a master server.");
 
 	Cmd_AddCommand ("sv_dumpentities", &SV_DumpEntities_f); /* FS: Added */
 	Cmd_AddCommand ("sv_protocol", &SV_Protocol_f); //johnfitz

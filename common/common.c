@@ -1365,60 +1365,60 @@ void COM_Init (void)
 	if (nehahra) /* FS: For Nehara */
 	{
 		cutscene = Cvar_Get("cutscene", "1", CVAR_ARCHIVE); 
-		Cvar_Set_Description("cutscene", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("cutscene", "Special internal CVAR for Nehara mod.");
 		nehx00 = Cvar_Get("nehx00", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx00", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx00", "Special internal CVAR for Nehara mod.");
 		nehx01 = Cvar_Get("nehx01", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx01", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx01", "Special internal CVAR for Nehara mod.");
 		nehx02 = Cvar_Get("nehx02", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx02", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx02", "Special internal CVAR for Nehara mod.");
 		nehx03 = Cvar_Get("nehx03", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx03", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx03", "Special internal CVAR for Nehara mod.");
 		nehx04 = Cvar_Get("nehx04", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx04", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx04", "Special internal CVAR for Nehara mod.");
 		nehx05 = Cvar_Get("nehx05", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx05", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx05", "Special internal CVAR for Nehara mod.");
 		nehx06 = Cvar_Get("nehx06", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx06", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx06", "Special internal CVAR for Nehara mod.");
 		nehx07 = Cvar_Get("nehx07", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx07", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx07", "Special internal CVAR for Nehara mod.");
 		nehx08 = Cvar_Get("nehx08", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx08", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx08", "Special internal CVAR for Nehara mod.");
 		nehx09 = Cvar_Get("nehx09", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx09", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx09", "Special internal CVAR for Nehara mod.");
 		nehx10 = Cvar_Get("nehx10", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx10", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx10", "Special internal CVAR for Nehara mod.");
 		nehx11 = Cvar_Get("nehx11", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx11", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx11", "Special internal CVAR for Nehara mod.");
 		nehx12 = Cvar_Get("nehx12", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx12", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx12", "Special internal CVAR for Nehara mod.");
 		nehx13 = Cvar_Get("nehx13", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx13", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx13", "Special internal CVAR for Nehara mod.");
 		nehx14 = Cvar_Get("nehx14", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx14", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx14", "Special internal CVAR for Nehara mod.");
 		nehx15 = Cvar_Get("nehx15", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx15", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx15", "Special internal CVAR for Nehara mod.");
 		nehx16 = Cvar_Get("nehx16", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx16", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx16", "Special internal CVAR for Nehara mod.");
 		nehx17 = Cvar_Get("nehx17", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx17", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx17", "Special internal CVAR for Nehara mod.");
 		nehx18 = Cvar_Get("nehx18", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx18", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx18", "Special internal CVAR for Nehara mod.");
 		nehx19 = Cvar_Get("nehx19", "0", CVAR_ARCHIVE);
-		Cvar_Set_Description("nehx19", "Special internal CVAR for Nehara mod.");
+		Cvar_SetDescription("nehx19", "Special internal CVAR for Nehara mod.");
 	}
 #endif // QUAKE1
 
 	registered = Cvar_Get("registered", "0", CVAR_NOSET|CVAR_PROTECTED);
-	Cvar_Set_Description("registered", "Special internal CVAR for setting Registered game.");
+	Cvar_SetDescription("registered", "Special internal CVAR for setting Registered game.");
 #ifdef QUAKE1
 	cmdline = Cvar_Get("cmdline","", 0);
-	Cvar_Set_Description("cmdline", "Adds command line parameters as script statements\nCommands lead with a +, and continue until a - or another +\nquake +prog jctest.qp +cmd amlev1\nquake -nosound +cmd amlev1");
+	Cvar_SetDescription("cmdline", "Adds command line parameters as script statements\nCommands lead with a +, and continue until a - or another +\nquake +prog jctest.qp +cmd amlev1\nquake -nosound +cmd amlev1");
 #endif // QUAKE1
 
 	/* FS: Allow use of the error cmd */
 	sv_allow_errorcmd = Cvar_Get("sv_allow_errorcmd", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("sv_allow_errorcmd", "Allow the use of error command.");
+	Cvar_SetDescription("sv_allow_errorcmd", "Allow the use of error command.");
 
 	Cmd_AddCommand ("path", COM_Path_f);
 	Cmd_AddCommand ("dir", COM_Dir_f); /* FS: From Quake 2 */

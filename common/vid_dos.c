@@ -89,13 +89,13 @@ VID_Init
 void    VID_Init (unsigned char *palette)
 {
 	vid_mode = Cvar_Get("vid_mode","0", 0);
-	Cvar_Set_Description("vid_mode", "Current video mode.");
+	Cvar_SetDescription("vid_mode", "Current video mode.");
 	vid_wait = Cvar_Get("vid_wait","0", CVAR_ARCHIVE);
-	Cvar_Set_Description("vid_wait", "Vsync modes.  0 - off.  1 - on.  2 - Double buffer no vsync.");
+	Cvar_SetDescription("vid_wait", "Vsync modes.  0 - off.  1 - on.  2 - Double buffer no vsync.");
 	vid_nopageflip = Cvar_Get("vid_nopageflip","0", CVAR_ARCHIVE);
-	Cvar_Set_Description("vid_nopageflip", "Disable page flipping for modes that support it.");
+	Cvar_SetDescription("vid_nopageflip", "Disable page flipping for modes that support it.");
 	_vid_wait_override = Cvar_Get("_vid_wait_override", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("_vid_wait_override", "Allow the engine to control the vsync automatically.  0 will override vid_wait for no vsync on double buffered modes.");
+	Cvar_SetDescription("_vid_wait_override", "Allow the engine to control the vsync automatically.  0 will override vid_wait for no vsync on double buffered modes.");
 	_vid_default_mode = Cvar_Get("_vid_default_mode","0", CVAR_ARCHIVE);
 	_vid_default_mode_win = Cvar_Get("_vid_default_mode_win","1", CVAR_ARCHIVE);
 	vid_config_x = Cvar_Get("vid_config_x","800", CVAR_ARCHIVE);

@@ -165,9 +165,9 @@ void S_Init (void)
 
 	/* FS: New stuff */
 	s_khz = Cvar_Get("s_khz","", CVAR_ARCHIVE);
-	Cvar_Set_Description("s_khz", "Sound sampling rate.");
+	Cvar_SetDescription("s_khz", "Sound sampling rate.");
 	s_musicvolume = Cvar_Get("s_musicvolume", "1.0", CVAR_ARCHIVE);
-	Cvar_Set_Description("s_musicvolume", "Music volume for wav and ogg streaming.");
+	Cvar_SetDescription("s_musicvolume", "Music volume for wav and ogg streaming.");
 	s_mastervolume = Cvar_Get("s_mastervolume", "1.0", CVAR_ARCHIVE);
 	s_rawsamples_size_cvar = Cvar_Get("s_rawsamples_size", va("%d", MAX_RAW_SAMPLES), 0);
 

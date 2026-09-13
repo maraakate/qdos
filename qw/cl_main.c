@@ -1323,30 +1323,30 @@ void CL_Init (void)
 	cl_predict = Cvar_Get("cl_predict", "1", 0);
 
 	localid = Cvar_Get("localid", "", 0);
-	Cvar_Set_Description("localid", "Internal CVAR used by Server Browsers for passing remote commands.");
+	Cvar_SetDescription("localid", "Internal CVAR used by Server Browsers for passing remote commands.");
 
 	baseskin = Cvar_Get("baseskin", "base", 0);
 	allow_download_skins = Cvar_Get("allow_download_skins", "1", CVAR_ARCHIVE); /* FS: Was noskins */
-	Cvar_Set_Description("allow_download_skins", "Allow downloading of custom skins.");
+	Cvar_SetDescription("allow_download_skins", "Allow downloading of custom skins.");
 
 	//
 	// info mirrors
 	//
 	name = Cvar_Get("name","unnamed", CVAR_ARCHIVE|CVAR_USERINFO);
-	Cvar_Set_Description("name", "Player name.");
+	Cvar_SetDescription("name", "Player name.");
 	password = Cvar_Get("password", "", CVAR_USERINFO);
 	spectator = Cvar_Get("spectator", "0", CVAR_USERINFO);
-	Cvar_Set_Description("spectator", "Enables connecting to supported servers as a spectator.");
+	Cvar_SetDescription("spectator", "Enables connecting to supported servers as a spectator.");
 	skin = Cvar_Get("skin","", CVAR_ARCHIVE|CVAR_USERINFO);
 	team = Cvar_Get("team","", CVAR_ARCHIVE|CVAR_USERINFO);
 	topcolor = Cvar_Get("topcolor","0", CVAR_ARCHIVE|CVAR_USERINFO);
 	bottomcolor = Cvar_Get("bottomcolor","0", CVAR_ARCHIVE|CVAR_USERINFO);
 	rate = Cvar_Get("rate","2500", CVAR_ARCHIVE|CVAR_USERINFO);
-	Cvar_Set_Description("rate", "Connection rate.  Values over 25000 are typically unnecessary.");
+	Cvar_SetDescription("rate", "Connection rate.  Values over 25000 are typically unnecessary.");
 	msg = Cvar_Get("msg","1", CVAR_ARCHIVE|CVAR_USERINFO);
 	noaim = Cvar_Get("noaim","0", CVAR_ARCHIVE|CVAR_USERINFO);
 	chat = Cvar_Get("chat", "", CVAR_USERINFO|CVAR_NOSET|CVAR_PROTECTED);
-	Cvar_Set_Description("chat", "Internal userinfo CVAR used for EZQ chat notifcations.");
+	Cvar_SetDescription("chat", "Internal userinfo CVAR used for EZQ chat notifcations.");
 
 	/* FS: FTE Extensions */
 #ifdef PROTOCOL_VERSION_FTE
@@ -1365,42 +1365,42 @@ void CL_Init (void)
 
 	/* FS: New stuff */
 	cl_downloadrate_hack = Cvar_Get("cl_downloadrate_hack", "0", 0); /* FS: Gross download hack */
-	Cvar_Set_Description("cl_downloadrate_hack", "Skip rendering a few frames during downloads for faster downloading.");
+	Cvar_SetDescription("cl_downloadrate_hack", "Skip rendering a few frames during downloads for faster downloading.");
 	con_show_description = Cvar_Get("con_show_description", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("con_show_description", "Show descriptions for CVARs.");
+	Cvar_SetDescription("con_show_description", "Show descriptions for CVARs.");
 	con_show_dev_flags = Cvar_Get("con_show_dev_flags", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("con_show_dev_flags", "Show developer flag options.");
+	Cvar_SetDescription("con_show_dev_flags", "Show developer flag options.");
 	cl_autorepeat_allkeys = Cvar_Get("cl_autorepeat_allkeys", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_autorepeat_allkeys", "Allow to autorepeat any key, not just Backspace, Pause, PgUp, and PgDn keys.");
+	Cvar_SetDescription("cl_autorepeat_allkeys", "Allow to autorepeat any key, not just Backspace, Pause, PgUp, and PgDn keys.");
 	console_old_complete = Cvar_Get("console_old_complete", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("console_old_complete", "Use legacy style tab completion.");
+	Cvar_SetDescription("console_old_complete", "Use legacy style tab completion.");
 	net_broadcast_chat = Cvar_Get("net_broadcast_chat", "1", CVAR_ARCHIVE);  /* FS: EZQ Chat */
-	Cvar_Set_Description("net_broadcast_chat", "Broadcast EZQ chats.");
+	Cvar_SetDescription("net_broadcast_chat", "Broadcast EZQ chats.");
 	cl_sleep = Cvar_Get("cl_sleep", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_sleep", "Reduce CPU usage by issuing sleep commands between extra frames.");
+	Cvar_SetDescription("cl_sleep", "Reduce CPU usage by issuing sleep commands between extra frames.");
 #ifdef USE_CURL
 	allow_download_http = Cvar_Get("allow_download_http", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("allow_download_http", "Allow QuakeForge HTTP downloading.");
+	Cvar_SetDescription("allow_download_http", "Allow QuakeForge HTTP downloading.");
 #endif
 	allow_download_sounds = Cvar_Get ("allow_download_sounds", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("allow_download_sounds", "Allow downloading of custom sounds.");
+	Cvar_SetDescription("allow_download_sounds", "Allow downloading of custom sounds.");
 
 #ifdef GAMESPY
 	/* FS: GameSpy CVARs */
 	cl_master_server_ip = Cvar_Get("cl_master_server_ip", CL_MASTER_ADDR, CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_ip", "GameSpy Master Server IP.");
+	Cvar_SetDescription("cl_master_server_ip", "GameSpy Master Server IP.");
 	cl_master_server_port = Cvar_Get("cl_master_server_port", CL_MASTER_PORT, CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_port", "GameSpy Master Server Port.");
+	Cvar_SetDescription("cl_master_server_port", "GameSpy Master Server Port.");
 	cl_master_server_queries = Cvar_Get("cl_master_server_queries", "10", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_queries", "Number of sockets to allocate for GameSpy.");
+	Cvar_SetDescription("cl_master_server_queries", "Number of sockets to allocate for GameSpy.");
 	cl_master_server_timeout = Cvar_Get("cl_master_server_timeout", "3000", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_timeout", "Timeout (in milliseconds) to give up on pinging a server.");
+	Cvar_SetDescription("cl_master_server_timeout", "Timeout (in milliseconds) to give up on pinging a server.");
 	cl_master_server_retries = Cvar_Get("cl_master_server_retries", "20", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_retries", "Number of retries to attempt for receiving the server list.  Formula is 50ms + 10ms for each retry.");
+	Cvar_SetDescription("cl_master_server_retries", "Number of retries to attempt for receiving the server list.  Formula is 50ms + 10ms for each retry.");
 	cl_master_server_optout = Cvar_Get("cl_master_server_optout", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_master_server_optout", "Opt-out of sending your QuakeWorld Username in GameSpy list requests.");
+	Cvar_SetDescription("cl_master_server_optout", "Opt-out of sending your QuakeWorld Username in GameSpy list requests.");
 	snd_gamespy_sounds = Cvar_Get("snd_gamespy_sounds", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("snd_gamespy_sounds", "Play the complete.wav and abort.wav from GameSpy3D if it exists in sounds/gamespy.");
+	Cvar_SetDescription("snd_gamespy_sounds", "Play the complete.wav and abort.wav from GameSpy3D if it exists in sounds/gamespy.");
 #endif
 
 	Cmd_AddCommand ("version", CL_Version_f);

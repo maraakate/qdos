@@ -876,7 +876,7 @@ void Key_Init (void)
 
 	 /* FS: Unbindall protection */
 	cl_unbindall_protection = Cvar_Get("cl_unbindall_protection", "1", 0);
-	Cvar_Set_Description("cl_unbindall_protection", "Protection from bad configs with unbindall.  Will warn on execute.");
+	Cvar_SetDescription("cl_unbindall_protection", "Protection from bad configs with unbindall.  Will warn on execute.");
 }
 
 /*

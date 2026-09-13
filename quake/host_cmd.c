@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _stricmp stricmp
 #endif
 
-cvar_t	*cl_demos; /*FS :Disable startup demos */
+cvar_t	*cl_demos; /*FS: Disable startup demos */
 extern cvar_t	*pausable;
 
 qboolean nostartupdemos = false; /* FS: Disable startup demos */
@@ -952,10 +952,10 @@ void Host_Connect_f (void)
 	Com_DPrintf(DEVELOPER_MSG_NET, "Net_hostport: %i\n", net_hostport);
 	Com_DPrintf(DEVELOPER_MSG_NET, "DefaultNet: %i\n", DEFAULTnet_hostport);
 
-	if(port[0] == 0)
+	if (port[0] == 0)
 	{
 		Com_DPrintf(DEVELOPER_MSG_NET, "No port argv passed.  Defaulting to %i.\n", DEFAULTnet_hostport); /* FS */
-		net_hostport = DEFAULTnet_hostport;        
+		net_hostport = DEFAULTnet_hostport;
 	}
 	else
 	{
@@ -1504,7 +1504,7 @@ void Host_Kill_f (void)
 
 	if (sv_player->v.health <= 0)
 	{
-		SV_ClientPrintf ("Can't suicide -- allready dead!\n");
+		SV_ClientPrintf ("Can't suicide - already dead!\n");
 		return;
 	}
 	
@@ -1595,7 +1595,7 @@ void Host_Spawn_f (void)
 
 	if (host_client->spawned)
 	{
-		Com_Printf ("Spawn not valid -- allready spawned\n");
+		Com_Printf ("Spawn not valid - already spawned\n");
 		return;
 	}
 
@@ -2327,5 +2327,5 @@ void Host_InitCommands (void)
 
 	 /* FS: Disable startup demos */
 	cl_demos = Cvar_Get("cl_demos", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("cl_demos", "Set to 0 to disable startup demos.");
+	Cvar_SetDescription("cl_demos", "Set to 0 to disable startup demos.");
 }

@@ -96,7 +96,7 @@ void	Cvar_Init (void);
 
 cvar_t	*Cvar_FindVar (const char *var_name); /* FS: Added */
 
-void	Cvar_Set_Description (const char *var_name, const char *description); /* FS: Added */
+void	Cvar_SetDescription (const char *var_name, const char *description); /* FS: Added */
 
 void	Cvar_CommandCallbackFn (const char *var_name, void (*commandCallbackFn)(cvar_t *self)); /* FS */
 void	Cvar_SetCallbackFn (const char *var_name, void (*setCallbackFn)(cvar_t *self)); /* FS */

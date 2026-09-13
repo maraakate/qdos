@@ -1079,7 +1079,7 @@ void V_Init (void)
 	v_ipitch_level = Cvar_Get("v_ipitch_level", "0.3", 0);
 
 	v_contentblend = Cvar_Get("v_contentblend", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("v_contentblend", "Disable palette blends."); /* FS: Fucking hate palette blends */
+	Cvar_SetDescription("v_contentblend", "Disable palette blends."); /* FS: Fucking hate palette blends */
 	v_idlescale = Cvar_Get("v_idlescale", "0", 0);
 	crosshaircolor = Cvar_Get("crosshaircolor", "79", CVAR_ARCHIVE);
 	crosshair = Cvar_Get("crosshair", "0", CVAR_ARCHIVE);

@@ -1146,31 +1146,31 @@ void V_Init (void)
 	v_ipitch_level = Cvar_Get("v_ipitch_level", "0.3", 0);
 
 	v_contentblend = Cvar_Get("v_contentblend", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("v_contentblend", "Disable palette blends."); /* FS: Fucking hate palette blends */
+	Cvar_SetDescription("v_contentblend", "Disable palette blends."); /* FS: Fucking hate palette blends */
 
 	/* FS: For Mod Compatibility */
 #ifndef GLQUAKE
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", 0);
-	Cvar_Set_Description("r_wateralpha", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("r_wateralpha", "Unused CVAR for mod compatibility.");
 #endif
 	fog = Cvar_Get("fog", "0", 0);
-	Cvar_Set_Description("fog", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("fog", "Unused CVAR for mod compatibility.");
 	r_oldsky = Cvar_Get("r_oldsky", "0", 0);
-	Cvar_Set_Description("r_oldsky", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("r_oldsky", "Unused CVAR for mod compatibility.");
 	gl_fogenable = Cvar_Get("gl_fogenable", "0", 0);
-	Cvar_Set_Description("gl_fogenable", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("gl_fogenable", "Unused CVAR for mod compatibility.");
 	gl_fogdensity = Cvar_Get("gl_fogdensity", "0", 0);
-	Cvar_Set_Description("gl_fogdensity", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("gl_fogdensity", "Unused CVAR for mod compatibility.");
 	gl_fogred = Cvar_Get ("gl_fogred", "0", 0);
-	Cvar_Set_Description("gl_fogred", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("gl_fogred", "Unused CVAR for mod compatibility.");
 	gl_foggreen = Cvar_Get ("gl_foggreen", "0", 0);
-	Cvar_Set_Description("gl_foggreen", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("gl_foggreen", "Unused CVAR for mod compatibility.");
 	gl_fogblue = Cvar_Get ("gl_fogbluge", "0", 0);
-	Cvar_Set_Description("gl_fogblue", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("gl_fogblue", "Unused CVAR for mod compatibility.");
 	r_waterripple = Cvar_Get ("r_waterripple", "0", 0);
-	Cvar_Set_Description("r_waterripple", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("r_waterripple", "Unused CVAR for mod compatibility.");
 	r_skyfog = Cvar_Get ("r_skyfog", "0", 0);
-	Cvar_Set_Description("r_skyfog", "Unused CVAR for mod compatibility.");
+	Cvar_SetDescription("r_skyfog", "Unused CVAR for mod compatibility.");
 
 	v_idlescale = Cvar_Get("v_idlescale", "0", 0);
 	crosshaircolor = Cvar_Get("crosshaircolor", "79", CVAR_ARCHIVE);

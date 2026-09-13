@@ -414,11 +414,11 @@ void SCR_Init (void)
 
 	/* FS: New stuff */
 	show_fps = Cvar_Get("show_fps","0", CVAR_ARCHIVE); /* FS: show_fps from Qrack */
-	Cvar_Set_Description("show_fps", "Show framerate measured in Frames Per Second.");
+	Cvar_SetDescription("show_fps", "Show framerate measured in Frames Per Second.");
 	show_time = Cvar_Get("show_time","0", CVAR_ARCHIVE); 
-	Cvar_Set_Description("show_time", "Show current time in the HUD.  1 for military.  2 for AM/PM.");
+	Cvar_SetDescription("show_time", "Show current time in the HUD.  1 for military.  2 for AM/PM.");
 	show_uptime = Cvar_Get("show_uptime","0", CVAR_ARCHIVE);
-	Cvar_Set_Description("show_uptime", "Show uptime.");
+	Cvar_SetDescription("show_uptime", "Show uptime.");
 #ifdef QUAKEWORLD
 	show_ping = Cvar_Get("show_ping", "0", CVAR_ARCHIVE);
 #endif

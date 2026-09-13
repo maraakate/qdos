@@ -236,29 +236,29 @@ void Host_InitLocal (void)
 	host_framerate = Cvar_Get("host_framerate","0", 0); // set for slow motion
 	host_speeds = Cvar_Get("host_speeds","0", 0); // set for running times
 	cl_maxfps = Cvar_Get("cl_maxfps", "72.0", CVAR_ARCHIVE); /* FS: Technically it was host_maxfps, but cl_maxfps is standard in other Quake games */ //johnfitz
-	Cvar_Set_Description("cl_maxfps", "Maximum frames pers second to render.");
+	Cvar_SetDescription("cl_maxfps", "Maximum frames pers second to render.");
 	host_timescale = Cvar_Get("host_timescale", "0", 0); //johnfitz
 	sys_ticrate = Cvar_Get("sys_ticrate","0.05", 0);
 	serverprofile = Cvar_Get("serverprofile","0", 0);
 
 	max_edicts = Cvar_Get("max_edicts", "2048", CVAR_LATCH); //johnfitz
-	Cvar_Set_Description("max_edicts", "Maximum number of edicts allowed.");
+	Cvar_SetDescription("max_edicts", "Maximum number of edicts allowed.");
 	fraglimit = Cvar_Get("fraglimit","0", CVAR_LATCH|CVAR_SERVERINFO);
-	Cvar_Set_Description("fraglimit", "Fraglimit in a deathmatch game.");
+	Cvar_SetDescription("fraglimit", "Fraglimit in a deathmatch game.");
 	timelimit = Cvar_Get("timelimit","0", CVAR_LATCH|CVAR_SERVERINFO);
-	Cvar_Set_Description("timelimit", "Timelimit in a deathmatch game.");
+	Cvar_SetDescription("timelimit", "Timelimit in a deathmatch game.");
 	teamplay = Cvar_Get("teamplay","0", CVAR_LATCH|CVAR_SERVERINFO);
-	Cvar_Set_Description("teamplay", "Enable team deathmatch.");
+	Cvar_SetDescription("teamplay", "Enable team deathmatch.");
 	samelevel = Cvar_Get("samelevel","0", 0);
-	Cvar_Set_Description("samelevel", "Repeats the same level if an endlevel is triggered.");
+	Cvar_SetDescription("samelevel", "Repeats the same level if an endlevel is triggered.");
 	noexit = Cvar_Get("noexit","0", CVAR_SERVERINFO);
-	Cvar_Set_Description("noexit", "Do not allow exiting in a game.");
+	Cvar_SetDescription("noexit", "Do not allow exiting in a game.");
 	skill = Cvar_Get("skill","1", 0); // 0 - 3
-	Cvar_Set_Description("skill", "Sets the skill.  Valid values are 0 through 3.");
+	Cvar_SetDescription("skill", "Sets the skill.  Valid values are 0 through 3.");
 	deathmatch = Cvar_Get("deathmatch","0", CVAR_LATCH); // 0, 1, or 2
-	Cvar_Set_Description("deathmatch", "Enable a deathmatch game.  Coop must be set to 0.");
+	Cvar_SetDescription("deathmatch", "Enable a deathmatch game.  Coop must be set to 0.");
 	coop = Cvar_Get("coop","0", CVAR_LATCH); // 0 or 1
-	Cvar_Set_Description("coop", "Enable a coop game.  Deathmatch must be set to 0.");
+	Cvar_SetDescription("coop", "Enable a coop game.  Deathmatch must be set to 0.");
 
 	pausable = Cvar_Get("pausable","1", 0);
 
@@ -266,11 +266,11 @@ void Host_InitLocal (void)
 
 /* FS: New stuff */
 	con_show_description = Cvar_Get("con_show_description", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("con_show_description", "Show descriptions for CVARs.");
+	Cvar_SetDescription("con_show_description", "Show descriptions for CVARs.");
 	con_show_dev_flags = Cvar_Get("con_show_dev_flags", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("con_show_dev_flags", "Show developer flag options.");
+	Cvar_SetDescription("con_show_dev_flags", "Show developer flag options.");
 	timestamp = Cvar_Get("timestamp", "0", 0); /* FS: Timestamp */
-	Cvar_Set_Description("timestamp", "Enables timestamps.  1 for military format.  2 for AM/PM format.");
+	Cvar_SetDescription("timestamp", "Enables timestamps.  1 for military format.  2 for AM/PM format.");
 
 	Host_FindMaxClients ();
 

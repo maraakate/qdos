@@ -175,7 +175,7 @@ void IN_Init (void)
 	int i;
 
 	m_filter = Cvar_Get("m_filter", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("m_filter", "Smooths out mouse movement.  Can cause input lag.");
+	Cvar_SetDescription("m_filter", "Smooths out mouse movement.  Can cause input lag.");
 	in_joystick = Cvar_Get("joystick", "1", CVAR_ARCHIVE);
 	joy_numbuttons = Cvar_Get("joybuttons", "4", CVAR_ARCHIVE);
 	aux_look = Cvar_Get("auxlook", "1", CVAR_ARCHIVE);

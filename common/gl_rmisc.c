@@ -177,55 +177,55 @@ void R_Init (void)
 
 	r_norefresh = Cvar_Get("r_norefresh", "0", 0);
 	r_lightmap = Cvar_Get("r_lightmap", "0", 0);
-	Cvar_Set_Description("r_lightmap", "Changes textures to white to show the lightmap blending.");
+	Cvar_SetDescription("r_lightmap", "Changes textures to white to show the lightmap blending.");
 	r_fullbright = Cvar_Get("r_fullbright", "0", 0);
-	Cvar_Set_Description("r_fullbright", "Full-bright lights.  Disabled in Multiplayer.");
+	Cvar_SetDescription("r_fullbright", "Full-bright lights.  Disabled in Multiplayer.");
 	r_drawentities = Cvar_Get("r_drawentities", "1", 0);
 	r_drawviewmodel = Cvar_Get("r_drawviewmodel", "1", 0);
 	r_shadows = Cvar_Get("r_shadows", "0", 0);
 	r_mirroralpha = Cvar_Get("r_mirroralpha", "1", 0);
-	Cvar_Set_Description("r_mirroralpha", "Level of mirror transparency.  Values lower than 1 (in decimal ranges i.e. 0.5) will adjust the transparency of the stain-glass window in start.bsp; showing a mirror effect.  Disabled in QuakeWorld.");
+	Cvar_SetDescription("r_mirroralpha", "Level of mirror transparency.  Values lower than 1 (in decimal ranges i.e. 0.5) will adjust the transparency of the stain-glass window in start.bsp; showing a mirror effect.  Disabled in QuakeWorld.");
 	r_wateralpha = Cvar_Get("r_wateralpha", "1", 0);
-	Cvar_Set_Description("r_wateralpha", "Level of water transparency.  Values lower than 1 (in decimal ranges i.e. 0.5) will have transparent water in maps compiled with transparent water.");
+	Cvar_SetDescription("r_wateralpha", "Level of water transparency.  Values lower than 1 (in decimal ranges i.e. 0.5) will have transparent water in maps compiled with transparent water.");
 	r_dynamic = Cvar_Get("r_dynamic", "1", 0);
-	Cvar_Set_Description("r_dynamic", "Dynamic Lighting.");
+	Cvar_SetDescription("r_dynamic", "Dynamic Lighting.");
 	r_novis = Cvar_Get("r_novis", "0", 0);
-	Cvar_Set_Description("r_novis", "Skip loading of VIS data.  Useful for seeing transparent water in maps not compiled with it.  Very slow.");
+	Cvar_SetDescription("r_novis", "Skip loading of VIS data.  Useful for seeing transparent water in maps not compiled with it.  Very slow.");
 	r_speeds = Cvar_Get("r_speeds", "0", 0);
 #ifdef QUAKEWORLD
 	r_netgraph = Cvar_Get("r_netgraph", "0", 0);
-	Cvar_Set_Description("r_netgraph", "Draw a network graph showing latency and packet loss.");
+	Cvar_SetDescription("r_netgraph", "Draw a network graph showing latency and packet loss.");
 #endif
 	r_gunfov = Cvar_Get("r_gunfov", "75", CVAR_ARCHIVE); /* FS */
 
 	gl_clear = Cvar_Get("gl_clear", "0", 0);
-	Cvar_Set_Description("gl_clear", "Use a clear colour to avoid Hall of Mirror (HOM) effects.  Useful for noclipping, spectating, and finding leaks in maps.");
+	Cvar_SetDescription("gl_clear", "Use a clear colour to avoid Hall of Mirror (HOM) effects.  Useful for noclipping, spectating, and finding leaks in maps.");
 	gl_texsort = Cvar_Get("gl_texsort", "1", 0);
 
  	if (gl_mtexable)
 		Cvar_SetValue ("gl_texsort", 0.0);
 
 	gl_cull = Cvar_Get("gl_cull", "1", 0);
-	Cvar_Set_Description("gl_cull", "Cull (i.e. skip) rendering of objects not in the viewport.");
+	Cvar_SetDescription("gl_cull", "Cull (i.e. skip) rendering of objects not in the viewport.");
 	gl_smoothmodels = Cvar_Get("gl_smoothmodels", "1", 0);
-	Cvar_Set_Description("gl_smoothmodels", "Smooth textures on models.  Recommended to leave enabled as it can cause visual artifacts if disabled.");
+	Cvar_SetDescription("gl_smoothmodels", "Smooth textures on models.  Recommended to leave enabled as it can cause visual artifacts if disabled.");
 	gl_affinemodels = Cvar_Get("gl_affinemodels", "0", 0);
 	gl_polyblend = Cvar_Get("gl_polyblend", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_polyblend", "Show palette blends i.e. screen turning red from damage.");
+	Cvar_SetDescription("gl_polyblend", "Show palette blends i.e. screen turning red from damage.");
 	gl_flashblend = Cvar_Get("gl_flashblend", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_flashblend", "Set to 1 to use fake dynamic lights that have a mushroom cloud effect.  Can improve performance on slower machines.");
+	Cvar_SetDescription("gl_flashblend", "Set to 1 to use fake dynamic lights that have a mushroom cloud effect.  Can improve performance on slower machines.");
 	gl_playermip = Cvar_Get("gl_playermip", "0", 0);
 	gl_nocolors = Cvar_Get("gl_nocolors", "0", 0);
-	Cvar_Set_Description("gl_nocolors", "Don't use top/bottom colours for players.");
+	Cvar_SetDescription("gl_nocolors", "Don't use top/bottom colours for players.");
 	gl_finish = Cvar_Get("gl_finish", "0", 0);
-	Cvar_Set_Description("gl_finish", "Send a gl_finish at the end of every frame.  Some older cards may require this.");
+	Cvar_SetDescription("gl_finish", "Send a gl_finish at the end of every frame.  Some older cards may require this.");
 
 	gl_keeptjunctions = Cvar_Get("gl_keeptjunctions","1", CVAR_ARCHIVE|CVAR_LATCH);
-	Cvar_Set_Description("gl_keeptjunctions", "Keep co-linear points/t-junctions.  Disabling may show some gaps/lines in architecture, but may improve performance on slow machines.");
+	Cvar_SetDescription("gl_keeptjunctions", "Keep co-linear points/t-junctions.  Disabling may show some gaps/lines in architecture, but may improve performance on slow machines.");
 
 #ifdef QUAKE1
 	gl_doubleeyes = Cvar_Get("gl_doubleeys", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_doubleeyes", "Double size of model eyes, since they are really hard to see in GL.");
+	Cvar_SetDescription("gl_doubleeyes", "Double size of model eyes, since they are really hard to see in GL.");
 #endif
 
 	r_waterwarp = Cvar_Get("r_waterwarp", "1", CVAR_ARCHIVE); /* FS: TODO FIXME dummy */
@@ -234,11 +234,11 @@ void R_Init (void)
 
 	/* FS */
 	gl_zfar_dist = Cvar_Get("gl_zfar_dist", "8192", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_zfar_dist", "Adjusts the zFar distance.  May need to be inreased for larger maps.");
+	Cvar_SetDescription("gl_zfar_dist", "Adjusts the zFar distance.  May need to be inreased for larger maps.");
 	gl_nodelete = Cvar_Get("gl_nodelete", "0", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_nodelete", "Set to 1 to keep all loaded textures in video memory like the original GLQuake.");
+	Cvar_SetDescription("gl_nodelete", "Set to 1 to keep all loaded textures in video memory like the original GLQuake.");
 	gl_no_error_check = Cvar_Get("gl_no_error_check", "1", CVAR_ARCHIVE);
-	Cvar_Set_Description("gl_no_error_check", "Triggers an assert when a glError() is triggered in debug builds.  In release builds will quit with a Sys_Error().");
+	Cvar_SetDescription("gl_no_error_check", "Triggers an assert when a glError() is triggered in debug builds.  In release builds will quit with a Sys_Error().");
 
 	R_InitBubble();
 
