@@ -276,6 +276,9 @@ void BuildTris (void)
 	alltris += pheader->numtris;
 }
 
+static const char GLQUAKEDIR[] = "glquake/";
+static const char PROGSDIR[] = "progs/";
+static const char MS2EXTENSION[] = ".ms2";
 
 /*
 ================
@@ -293,12 +296,24 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	aliasmodel = m;
 	paliashdr = hdr;
 
+	if (gl_noaliascache->intValue || COM_CheckParm("-noglaliascache"))
+	{
+		Com_DPrintf(DEVELOPER_MSG_VIDEO, "meshing %s...\n", m->name);
+		BuildTris();
+		goto end;
+	}
+
 	//
 	// look for a cached version
 	//
-	Q_strlcpy (cache, "glquake/", sizeof(cache));
-	COM_StripExtension (m->name + strlen("progs/"), cache + strlen("glquake/"));
-	Q_strlcat (cache, ".ms2", sizeof(cache));
+	Q_strlcpy (cache, GLQUAKEDIR, sizeof(cache));
+	COM_StripExtension (m->name + (sizeof(PROGSDIR) - 1), cache + (sizeof(GLQUAKEDIR) - 1));
+	Q_strlcat (cache, MS2EXTENSION, sizeof(cache));
+
+	if (COM_CheckParm("-generateglaliascache"))
+	{
+		goto build;
+	}
 
 	COM_FOpenFile (cache, &f);
 	if (f)
@@ -311,6 +326,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	}
 	else
 	{
+build:
 		//
 		// build it from scratch
 		//
@@ -327,7 +343,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		{
 			char gldir[MAX_OSPATH];
 
-			Com_sprintf (gldir, sizeof(gldir), "%s/glquake", com_gamedir);
+			Com_sprintf (gldir, sizeof(gldir), "%s/%s", com_gamedir, GLQUAKEDIR);
 			Sys_mkdir (gldir);
 			f = fopen (fullpath, "wb");
 		}
@@ -342,7 +358,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		}
 	}
 
-
+end:
 	// save the data out
 
 	paliashdr->poseverts = numorder;

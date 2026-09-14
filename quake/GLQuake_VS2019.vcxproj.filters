@@ -394,6 +394,7 @@
     </None>
     <None Include="progdefs.q1" />
     <None Include="progdefs.q2" />
+    <None Include="README.QD" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="winquake.rc">

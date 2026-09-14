@@ -225,6 +225,7 @@ extern	cvar_t	*gl_texturemode; /* FS: Now a CVAR so we can do +set gl_texturemod
 extern	cvar_t	*gl_zfar_dist; /* FS */
 extern	cvar_t	*gl_nodelete; /* FS */
 extern	cvar_t	*gl_no_error_check; /* FS */
+extern	cvar_t	*gl_noaliascache; /* FS */
 
 extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
 extern	qboolean	mirror;

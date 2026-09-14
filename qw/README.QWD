@@ -77,6 +77,8 @@ New CVARs and CMDs:
 * SND_RESTART -- CMD to restart the audio driver.
 * V_CONTENTBLEND -- This function is like gl_polyblend.  Set to 0
    to disable powerup and damage flashes, etc.
+* GL_NOALIASCACHE -- Set to 1 to build alias model cache on the fly
+   instead of using cached ms2 files.
 
 3. - Requirements
 ---------------------------------------------------------

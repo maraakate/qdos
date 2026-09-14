@@ -1333,6 +1333,7 @@
     <None Include="progdefs.q1" />
     <None Include="progdefs.q2" />
     <None Include="quake.ico" />
+    <None Include="README.QD" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="winquake.rc" />

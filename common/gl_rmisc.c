@@ -240,6 +240,8 @@ void R_Init (void)
 	Cvar_SetDescription("gl_nodelete", "Set to 1 to keep all loaded textures in video memory like the original GLQuake.");
 	gl_no_error_check = Cvar_Get("gl_no_error_check", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription("gl_no_error_check", "Triggers an assert when a glError() is triggered in debug builds.  In release builds will quit with a Sys_Error().");
+	gl_noaliascache = Cvar_Get("gl_noaliascache", "0", CVAR_ARCHIVE);
+	Cvar_SetDescription("gl_noaliascache", "Set to 1 to build alias model cache on the fly instead of using cached ms2 files.\n");
 
 	R_InitBubble();
 
