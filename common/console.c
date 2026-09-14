@@ -153,7 +153,9 @@ Con_Clear_f
 */
 void Con_Clear_f (void)
 {
-	con->firstline = 0;
+	con->display = con->current;
+	con->firstline = con->display; /* FS */
+
 	memset (con_main.text, ' ', CON_TEXTSIZE);
 	memset (con_chat.text, ' ', CON_TEXTSIZE);
 }
@@ -226,8 +228,6 @@ void Con_Resize (console_t *con)
 		con_totallines = CON_TEXTSIZE / con_linewidth;
 		numlines = oldtotallines;
 
-		con->firstline = 0;
-
 		if (con_totallines < numlines)
 			numlines = con_totallines;
 
@@ -248,6 +248,10 @@ void Con_Resize (console_t *con)
 							  oldtotallines) * oldwidth + j];
 			}
 		}
+
+		/* FS */
+		numlines = con_totallines - (con->current - con->firstline);
+		con->firstline = numlines - 1;
 
 		Con_ClearNotify ();
 	}
@@ -329,8 +333,8 @@ void Con_Linefeed (int cr)
 {
 	con->x = 0;
 
-	if (!cr)
-		con->firstline++;
+	if (!cr && !con->firstline) /* FS */
+		con->firstline = con->display++;
 
 	if (con->display == con->current)
 		con->display++;
@@ -772,8 +776,6 @@ void Con_DrawConsole (int lines)
 			Draw_Character ( (x+1)<<3, y, text[x]);
 	}
 
-	con->totalrows = (rows + 1) & ~1;
-
 #ifdef QUAKEWORLD
 	// draw the download bar
 	// figure out width
@@ -981,9 +983,9 @@ void Con_SafeDPrintf (unsigned long developerFlags, const char *fmt, ...)
 	scr_disabled_for_loading = temp;
 }
 
-void Con_SetTopBuffer (void)
+void Con_SetTopBuffer (void) /* FS */
 {
-	con->display = (con->current - (con->firstline - 1));
+	con->display = con->firstline + 1;
 	if (con->display > con->current)
 		con->display = con->current;
 }

@@ -425,16 +425,9 @@ void Key_Console (int key)
 
 	if ( (key == K_PGUP) || (key == K_KP_PGUP) || (key==K_MWHEELUP) )
 	{
-		/* FS: Cap it to the first line like a text editor. */
-		if (con->display - 2 < (con->current - (con->firstline - 1)) + con->totalrows - 2)
-		{
-			Con_SetTopBuffer();
-			return;
-		}
-
 		con->display -= 2;
-		if (con->display < (con->current - (con->firstline - 1)) + con->totalrows - 2)
-			con->display = con->display - 2 < (con->current - (con->firstline - 1)) + con->totalrows - 2;
+		if (con->display <= con->firstline) /* FS: Cap it to the first line like a text editor. */
+			Con_SetTopBuffer();
 
 		return;
 	}
