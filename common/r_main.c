@@ -765,6 +765,8 @@ void R_DrawViewModel (void)
 
 	aliasxscale = oldAliasxscale;
 	aliasyscale = oldAliasyscale;
+
+	r_viewlighting.plightvec = NULL; /* silence -Wdangling-pointer warnings */
 }
 
 

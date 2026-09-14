@@ -438,5 +438,6 @@ void D_DrawSprite (void)
 	D_SpriteScanLeftEdge ();
 	D_SpriteScanRightEdge ();
 	D_SpriteDrawSpans (sprite_spans);
-}
 
+	sprite_spans = NULL; /* silence -Wdangling-pointer warnings */
+}
