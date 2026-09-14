@@ -69,7 +69,6 @@ static int current_field_buffer=0;
 static struct section_buffer section_buffers[NUM_SECTION_BUFFERS];
 static struct field_buffer field_buffers[NUM_FIELD_BUFFERS];
 static byte	extVoices,extCodecVoices; /* FS: GUS clicking sounds during map transitions and pauseing fix */
-int	havegus; /* FS: Is GUS our sound card? */
 
 //***************************************************************************
 // Internal routines

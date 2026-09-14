@@ -84,7 +84,6 @@ cvar_t	*temp1;
 /* FS: New stuff */
 cvar_t	*con_show_description;
 cvar_t	*con_show_dev_flags;
-cvar_t	*timestamp; /* FS: Timestamp */
 
 cvar_t	*dedicated;
 
@@ -269,8 +268,6 @@ void Host_InitLocal (void)
 	Cvar_SetDescription("con_show_description", "Show descriptions for CVARs.");
 	con_show_dev_flags = Cvar_Get("con_show_dev_flags", "1", CVAR_ARCHIVE);
 	Cvar_SetDescription("con_show_dev_flags", "Show developer flag options.");
-	timestamp = Cvar_Get("timestamp", "0", 0); /* FS: Timestamp */
-	Cvar_SetDescription("timestamp", "Enables timestamps.  1 for military format.  2 for AM/PM format.");
 
 	Host_FindMaxClients ();
 

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -128,7 +128,7 @@ typedef struct msurface_s
 
 	int			firstedge;	// look up in model->surfedges[], negative numbers
 	int			numedges;	// are backwards edges
-	
+
 // surface generation data
 	struct surfcache_s	*cachespots[MIPLEVELS];
 
@@ -136,7 +136,7 @@ typedef struct msurface_s
 	short		extents[2];
 
 	mtexinfo_t	*texinfo;
-	
+
 // lighting info
 	byte		styles[MAXLIGHTMAPS];
 	byte		*samples;		// [numstyles*surfsize]
@@ -158,7 +158,7 @@ typedef struct mnode_s
 
 // node specific
 	mplane_t	*plane;
-	struct mnode_s	*children[2];	
+	struct mnode_s	*children[2];
 
 	/* these two were unsigned short -- changed for BSP2 support */
 	unsigned int		firstsurface;
@@ -343,13 +343,13 @@ typedef struct model_s
 	modtype_t	type;
 	int			numframes;
 	synctype_t	synctype;
-	
+
 	int			flags;
 	int			fromgame; /* FS: From Engoo/leillol */
 	int			bspversion; /* FS: From QuakeSpasm */
 //
 // volume occupied by the model
-//		
+//
 	float		radius;
 	vec3_t		mins, maxs;
 	vec3_t		ymins, ymaxs; //johnfitz -- bounds for entities with nonzero yaw
@@ -422,7 +422,7 @@ typedef struct model_s
 //============================================================================
 
 void	Mod_Init (void);
-void	Mod_ClearAll (void);
+void	Mod_ClearAll (qboolean bFreeCache);
 model_t *Mod_ForName (char *name, qboolean crash);
 void	*Mod_Extradata (model_t *mod);	// handles caching
 void	Mod_TouchModel (char *name);

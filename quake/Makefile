@@ -23,11 +23,11 @@ COMMON=../common
 
 ifeq ($(DEBUG),1)
 CFLAGS  = -g -Wall -Werror -O0 -DDEBUG -DQUAKE1 -fno-strict-aliasing
-CFLAGS += -fomit-frame-pointer
 else
 CFLAGS  = -g -Wall -Werror -O2 -DNDEBUG -DQUAKE1 -fno-strict-aliasing
-CFLAGS += -fomit-frame-pointer
 endif
+
+CFLAGS += -fomit-frame-pointer -fno-common
 CFLAGS += -I. -I../common
 LIBS    =
 EXE     = qdos.exe

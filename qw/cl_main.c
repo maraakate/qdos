@@ -518,7 +518,7 @@ void CL_ClearState (void)
 
 	Com_DPrintf (DEVELOPER_MSG_MEM, "Clearing memory\n");
 	D_FlushCaches ();
-	Mod_ClearAll ();
+	Mod_ClearAll (false);
 	R_ClearDynamic(); /* FS */
 
 	if (host_hunklevel)  // FIXME: check this...

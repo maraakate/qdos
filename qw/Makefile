@@ -23,11 +23,10 @@ COMMON=../common
 
 ifeq ($(DEBUG),1)
 CFLAGS  = -g -Wall -Werror -O0 -DDEBUG -DQUAKEWORLD -fno-strict-aliasing
-CFLAGS += -fomit-frame-pointer
 else
 CFLAGS  = -g -Wall -Werror -O2 -DNDEBUG -DQUAKEWORLD -fno-strict-aliasing
-CFLAGS += -fomit-frame-pointer
 endif
+CFLAGS += -fomit-frame-pointer -fno-common
 
 CFLAGS += -I. -I../common
 CFLAGS += -DWATT32_NO_OLDIES -I../3rdparty/watt32/inc
