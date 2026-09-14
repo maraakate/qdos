@@ -57,6 +57,8 @@ typedef struct
 	int		current;		// line where next message will be printed
 	int		x;				// offset in current line for next print
 	int		display;		// bottom of console displays this line
+	int		firstline; /* FS */
+	int		totalrows; /* FS */
 } console_t;
 
 extern	console_t	con_main;

@@ -153,6 +153,7 @@ Con_Clear_f
 */
 void Con_Clear_f (void)
 {
+	con->firstline = 0;
 	memset (con_main.text, ' ', CON_TEXTSIZE);
 	memset (con_chat.text, ' ', CON_TEXTSIZE);
 }
@@ -224,6 +225,8 @@ void Con_Resize (console_t *con)
 		oldtotallines = con_totallines;
 		con_totallines = CON_TEXTSIZE / con_linewidth;
 		numlines = oldtotallines;
+
+		con->firstline = 0;
 
 		if (con_totallines < numlines)
 			numlines = con_totallines;
@@ -322,14 +325,17 @@ void Con_Init (void)
 Con_Linefeed
 ===============
 */
-void Con_Linefeed (void)
+void Con_Linefeed (int cr)
 {
 	con->x = 0;
+
+	if (!cr)
+		con->firstline++;
+
 	if (con->display == con->current)
 		con->display++;
 	con->current++;
-	memset (&con->text[(con->current%con_totallines)*con_linewidth]
-	, ' ', con_linewidth);
+	memset (&con->text[(con->current%con_totallines)*con_linewidth], ' ', con_linewidth);
 }
 
 /*
@@ -383,7 +389,7 @@ void Con_Print (char *txt)
 		
 		if (!con->x)
 		{
-			Con_Linefeed ();
+			Con_Linefeed (cr);
 		// mark time for transparent overlay
 			if (con->current >= 0)
 				con_times[con->current % NUM_CON_TIMES] = realtime;
@@ -766,6 +772,8 @@ void Con_DrawConsole (int lines)
 			Draw_Character ( (x+1)<<3, y, text[x]);
 	}
 
+	con->totalrows = (rows + 1) & ~1;
+
 #ifdef QUAKEWORLD
 	// draw the download bar
 	// figure out width
@@ -971,4 +979,11 @@ void Con_SafeDPrintf (unsigned long developerFlags, const char *fmt, ...)
 	Com_DPrintf (developerFlags, "%s", msg);
 
 	scr_disabled_for_loading = temp;
+}
+
+void Con_SetTopBuffer (void)
+{
+	con->display = (con->current - (con->firstline - 1));
+	if (con->display > con->current)
+		con->display = con->current;
 }
