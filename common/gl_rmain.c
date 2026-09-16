@@ -117,6 +117,8 @@ cvar_t	*gl_nodelete; /* FS */
 cvar_t	*gl_no_error_check; /* FS */
 cvar_t	*gl_noaliascache; /* FS */
 
+cvar_t	*r_maxparticles; /* FS */
+
 void MYgluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
 /*

@@ -144,9 +144,7 @@ cvar_t	*r_aliastransbase;
 cvar_t	*r_aliastransadj;
 cvar_t	*r_maxbmodeledges; /* FS: For big boy mods */
 cvar_t	*r_gunfov; /* FS */
-
-void CreatePassages (void);
-void SetVisibilityByPassages (void);
+cvar_t	*r_maxparticles;
 
 #ifdef QUAKEWORLD
 void R_NetGraph (void);
@@ -247,6 +245,8 @@ void R_Init (void)
 	r_maxbmodeledges = Cvar_Get("r_maxbmodeledges", "0", 0); /* FS: For big boy mods */
 	Cvar_SetDescription("r_maxbmodeledges", "Maximum number of bmodel edges to draw.");
 	r_gunfov = Cvar_Get("r_gunfov", "75", CVAR_ARCHIVE); /* FS */
+	r_maxparticles = Cvar_Get("r_maxparticles", va("%d", MAX_PARTICLES), CVAR_ARCHIVE);
+	Cvar_SetDescription("r_maxparticles", "Number of maximum particles that can be drawn at any given time.  Requires a game restart.");
 
 	Cvar_SetValue ("r_maxedges", (float)NUMSTACKEDGES);
 	Cvar_SetValue ("r_maxsurfs", (float)NUMSTACKSURFACES);
@@ -1066,11 +1066,7 @@ void R_RenderView_ (void)
 
 	R_SetupFrame ();
 
-#ifdef PASSAGES
-	SetVisibilityByPassages ();
-#else
 	R_MarkLeaves ();	// done here so we know if we're in water
-#endif
 
 // make FDIV fast. This reduces timing precision after we've been running for a
 // while, so we don't do it globally.  This also sets chop mode, and we do it

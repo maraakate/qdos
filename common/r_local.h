@@ -77,6 +77,7 @@ extern cvar_t	*r_reportedgeout;
 extern cvar_t	*r_maxedges;
 extern cvar_t	*r_numedges;
 extern cvar_t	*r_maxbmodeledges; /* FS: For some big boy mods */
+extern cvar_t	*r_maxparticles; /* FS */
 
 /* FS: Moved this */
 #define MAX_BMODEL_VERTS	(500*6)	/* FS: Was 6K */

@@ -227,6 +227,8 @@ extern	cvar_t	*gl_nodelete; /* FS */
 extern	cvar_t	*gl_no_error_check; /* FS */
 extern	cvar_t	*gl_noaliascache; /* FS */
 
+extern cvar_t	*r_maxparticles; /* FS */
+
 extern	int			mirrortexturenum;	// quake texturenum, not gltexturenum
 extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;

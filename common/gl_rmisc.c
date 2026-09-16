@@ -242,6 +242,8 @@ void R_Init (void)
 	Cvar_SetDescription("gl_no_error_check", "Triggers an assert when a glError() is triggered in debug builds.  In release builds will quit with a Sys_Error().");
 	gl_noaliascache = Cvar_Get("gl_noaliascache", "0", CVAR_ARCHIVE);
 	Cvar_SetDescription("gl_noaliascache", "Set to 1 to build alias model cache on the fly instead of using cached ms2 files.\n");
+	r_maxparticles = Cvar_Get("r_maxparticles", va("%d", MAX_PARTICLES), CVAR_ARCHIVE);
+	Cvar_SetDescription("r_maxparticles", "Number of maximum particles that can be drawn at any given time.  Requires a game restart.");
 
 	R_InitBubble();
 
@@ -674,10 +676,11 @@ extern void CL_Precache (void);
 
 void R_Restart_f (void)
 {
-	int temp;
 #if 1
 	Com_Printf("Not implemented!\n");
 #else
+	int temp;
+
 	R_Shutdown();
 	Scrap_Free();
 

@@ -28,6 +28,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	TOP_RANGE		16			// soldier uniform colors
 #define	BOTTOM_RANGE	96
 
+
+#define MAX_PARTICLES			2048	// default max # of particles at one time
+#define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
+//  on the command line
+
 //=============================================================================
 
 typedef struct efrag_s

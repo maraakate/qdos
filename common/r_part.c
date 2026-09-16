@@ -21,10 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 #include "r_local.h"
 
-#define MAX_PARTICLES			2048	// default max # of particles at one time
-#define ABSOLUTE_MIN_PARTICLES	512		// no fewer than this no matter what's
-										//  on the command line
-
 int		ramp1[8] = { 0x6f, 0x6d, 0x6b, 0x69, 0x67, 0x65, 0x63, 0x61 };
 int		ramp2[8] = { 0x6f, 0x6e, 0x6d, 0x6c, 0x6b, 0x6a, 0x68, 0x66 };
 int		ramp3[8] = { 0x6d, 0x6b, 6, 5, 4, 3 };
@@ -52,8 +48,7 @@ void R_InitParticles (void)
 	if (particles) /* FS: vid_restart.  Otherwise this corrupts the hunk. */
 		return;
 
-	i = COM_CheckParm ("-particles"); /* FS: TODO: Make this a CVAR. */
-
+	i = COM_CheckParm ("-particles");
 	if (i)
 	{
 		r_numparticles = atoi(com_argv[i + 1]);
@@ -62,7 +57,7 @@ void R_InitParticles (void)
 	}
 	else
 	{
-		r_numparticles = MAX_PARTICLES;
+		r_numparticles = max(ABSOLUTE_MIN_PARTICLES, r_maxparticles->intValue); /* FS: Finally made it a CVAR. */
 	}
 
 	particles = (particle_t *)
