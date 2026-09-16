@@ -1264,19 +1264,12 @@ void R_DrawWorld (void)
 
 	glColor3f_fp (1,1,1);
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
-#ifdef QUAKE2
-	R_ClearSkyBox ();
-#endif
 
 	R_RecursiveWorldNode (cl.worldmodel->nodes);
 
 	DrawTextureChains ();
 
 	R_BlendLightmaps ();
-
-#ifdef QUAKE2
-	R_DrawSkyBox ();
-#endif
 }
 
 
@@ -1582,10 +1575,8 @@ void GL_BuildLightmaps (void)
 			GL_CreateSurfaceLightmap (m->surfaces + i);
 			if ( m->surfaces[i].flags & SURF_DRAWTURB )
 				continue;
-#ifndef QUAKE2
 			if ( m->surfaces[i].flags & SURF_DRAWSKY )
 				continue;
-#endif
 			BuildSurfaceDisplayList (m->surfaces + i);
 		}
 	}
