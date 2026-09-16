@@ -415,6 +415,7 @@ void CL_ParseServerInfo (void)
 
 // local state
 	cl_entities[0].model = cl.worldmodel = cl.model_precache[1];
+	cl.nummodels = nummodels;
 
 	R_NewMap ();
 
@@ -1416,3 +1417,27 @@ void CL_PlayBackgroundTrack (int track)
 	}
 }
 // end Knightmare
+
+void CL_Precache (void) /* FS: Used for vid_restart. */
+{
+	int i;
+
+	if (cl.nummodels == 0)
+		return;
+
+	R_BeginRegistration();
+
+	for (i = 1; i < cl.nummodels; i++)
+	{
+		Mod_ForName (cl.model_precache[i]->name, false);
+	}
+
+	// local state
+	cl_entities[0].model = cl.worldmodel = cl.model_precache[1];
+
+	R_NewMap ();
+
+	R_EndRegistration();
+
+	Hunk_Check ();		// make sure nothing is hurt
+}

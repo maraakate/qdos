@@ -663,20 +663,46 @@ void R_Shutdown (void)
 	Cmd_RemoveCommand ("vid_restart");
 
 	Skin_FreeAll();
-	Mod_ClearAll(true);
+	Mod_ClearAll(false);
 	GL_ShutdownTexures();
 }
 
+extern int VID_SetMode (int modenum, unsigned char *palette);
+extern void GL_SetupState (void);
+extern void Scrap_Free (void);
+extern void CL_Precache (void);
+
 void R_Restart_f (void)
 {
+	int temp;
 #if 1
 	Com_Printf("Not implemented!\n");
 #else
 	R_Shutdown();
+	Scrap_Free();
+
+	// so Com_Printfs don't mess us up by forcing vid and snd updates
+	temp = scr_disabled_for_loading;
+	scr_disabled_for_loading = true;
+
+	S_MusicPause (); /* FS */
+	S_ClearBuffer ();
+
+	vid.recalc_refdef = true;
+	VID_SetMode(0, host_basepal);
+	GL_SetupState();
+	W_LoadWadFile ("gfx.wad");
 	R_InitTextures();
 	Draw_Init();
 	SCR_Init();
 	R_Init();
+	Con_Init();
 	Sbar_Init();
+
+	CL_Precache();
+
+	S_MusicResume();
+
+	scr_disabled_for_loading = false;
 #endif
 }

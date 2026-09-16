@@ -565,7 +565,6 @@ void Hunk_FreeToHighMark (int mark)
 	hunk_high_used = mark;
 }
 
-
 /*
 ===================
 Hunk_HighAllocName

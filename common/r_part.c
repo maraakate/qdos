@@ -49,6 +49,9 @@ void R_InitParticles (void)
 {
 	int		i;
 
+	if (particles) /* FS: vid_restart.  Otherwise this corrupts the hunk. */
+		return;
+
 	i = COM_CheckParm ("-particles"); /* FS: TODO: Make this a CVAR. */
 
 	if (i)

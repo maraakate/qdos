@@ -179,6 +179,15 @@ void Scrap_Upload (void)
 	scrap_dirty = false;
 }
 
+void Scrap_Free (void)
+{
+	scrap_uploads = 0;
+	scrap_texnum = 0;
+
+	memset(scrap_allocated, 0, sizeof(scrap_allocated));
+	memset(scrap_texels, 0, sizeof(scrap_texels));
+}
+
 //=============================================================================
 /* Support Routines */
 
@@ -443,6 +452,7 @@ void Draw_Init (void)
 	GLint value = 0;
 
 	registration_sequence = 1;
+	currenttexture = -1;
 
 	gl_nobind = Cvar_Get("gl_nobind", "0", 0);
 	gl_max_size = Cvar_Get("gl_max_size", "1024", CVAR_NOSET);

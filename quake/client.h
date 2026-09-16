@@ -260,6 +260,7 @@ typedef struct
 	/* FS: This crap is needed for snd_restart. */
 	char sound_precache_str[MAX_SOUNDS][MAX_QPATH];
 	int numsounds;
+	int nummodels;
 } client_state_t;
 
 

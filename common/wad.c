@@ -71,8 +71,17 @@ void W_LoadWadFile (char *filename)
 	wadinfo_t		*header;
 	unsigned		i;
 	int				infotableofs;
-	
+
+#if 0
+	if (wad_base)
+	{
+		free(wad_base);
+	}
+
+	wad_base = COM_LoadFile (filename, COM_LOADFILE_CALLOC);
+#else
 	wad_base = COM_LoadHunkFile (filename);
+#endif
 	if (!wad_base)
 	{
 		Sys_Error ("W_LoadWadFile: couldn't load %s", filename);
